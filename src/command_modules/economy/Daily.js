@@ -1,16 +1,15 @@
-const { PermissionsBitField, User } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "daily",
+    Name: "Daily",
     Description: "Work for a day to gain credtis",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: true,
+
+    DevOnly: false,
+
     RequiredPermissions: [],
-    RequiresAllPermissions: false,
-    SlashCommandOptions: [
-    ],
+    SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
         const userId = message.author?.id || message.user?.id
@@ -26,12 +25,12 @@ module.exports = {
 
             if (MinutesLeft > 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (60 * 60 * 1000))
-                return message.reply(modules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more hours.`, 'c9c175'))
+                return message.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more hours.`, 'c9c175'))
             } else if (CooldownTimeLeft / (1000) <= 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (1000))
-                return message.reply(modules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more seconds.`, 'c9c175'))
+                return message.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more seconds.`, 'c9c175'))
             } else {
-                return message.reply(modules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more minutes.`, 'c9c175'))
+                return message.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more minutes.`, 'c9c175'))
             }
 
 
@@ -40,7 +39,7 @@ module.exports = {
             DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "DailyLost", CurrentTime)
 
             const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
-            await message.reply(modules.embedMessage(`Here is your daily reward: **${CreditsEarned}** credits! \nYou have lost your daily streak and restart from **${UpdatedUser.dailyStreak}**.`, '6283b5'))
+            await message.reply(BotModules.embedMessage(`Here is your daily reward: **${CreditsEarned}** credits! \nYou have lost your daily streak and restart from **${UpdatedUser.dailyStreak}**.`, '6283b5'))
 
 
         } else {
@@ -48,7 +47,7 @@ module.exports = {
             DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "DailyKept", CurrentTime)
 
             const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
-            await message.reply(modules.embedMessage(`Here is your daily reward: **${CreditsEarned}** credits! \nYou have used daily **${UpdatedUser.dailyStreak}** days in a row.`, '6283b5'))
+            await message.reply(BotModules.embedMessage(`Here is your daily reward: **${CreditsEarned}** credits! \nYou have used daily **${UpdatedUser.dailyStreak}** days in a row.`, '6283b5'))
         }
     }
 }

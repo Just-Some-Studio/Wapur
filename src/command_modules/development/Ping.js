@@ -1,12 +1,14 @@
-const { PermissionsBitField } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
+const DataHandler = require("../../dataHandler.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
     Name: "ping",
     Description: "Measures bot and API latency",
-    AllowedUsers: ["969022741053341716"], // This list overrides the public command thing
-    PublicCommand: false,
+
+    DevOnly: true,
+    
     RequiredPermissions: [PermissionsBitField.Flags.ViewAuditLog],
-    RequiresAllPermissions: true,
     SlashCommandOptions: [
         {"Name": "Check_Type", "Description": "The type of check to perform", "Required": false, "Type": "String", "Choices": [
             {"Name": "All", "Value": "all"},

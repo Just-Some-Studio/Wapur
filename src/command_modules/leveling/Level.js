@@ -1,25 +1,24 @@
-const { PermissionsBitField, GuildAuditLogsEntry, AllowedMentionsTypes, User } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "level",
+    Name: "Level",
     Description: "Gets a user's level",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: true,
+
+    DevOnly: true,
+
     RequiredPermissions: [],
-    RequiresAllPermissions: true,
-    SlashCommandOptions: [
-    ],
+    SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
         const UserData = DataHandler.getUser(message.guild.id, message.author?.id || message.user?.id)
 
-        const CurrentLevel = modules.getLevelFromXp(UserData.exp)
+        const CurrentLevel = BotModules.getLevelFromXp(UserData.exp)
         const NextLevel = CurrentLevel + 1
 
-        const ExpForCurrent = modules.getExpRequiredForLevel(CurrentLevel)
-        const ExpForNext = modules.getExpRequiredForLevel(NextLevel)
+        const ExpForCurrent = BotModules.getExpRequiredForLevel(CurrentLevel)
+        const ExpForNext = BotModules.getExpRequiredForLevel(NextLevel)
 
         const ExpForNextLevelCalculated = ExpForNext - UserData.exp
 

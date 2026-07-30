@@ -1,14 +1,16 @@
-const { PermissionsBitField, GuildAuditLogsEntry, AllowedMentionsTypes } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
+const DataHandler = require("../../dataHandler.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "leaderboard",
+    Name: "Leaderboard",
     Description: "Get various leaderboards",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: false,
+
+    DevOnly: false,
+
     RequiredPermissions: [PermissionsBitField.Flags.KickMembers, PermissionsBitField.Flags.ModerateMembers],
-    RequiresAllPermissions: true,
-    SlashCommandOptions: [
-    ],
+    SlashCommandOptions: [],
+    
 
     async execute(message, arguements, botClient) {
     }

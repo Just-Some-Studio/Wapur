@@ -1,10 +1,13 @@
-const { PermissionsBitField, GuildAuditLogsEntry, AllowedMentionsTypes, User } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "example", //The name of the command and what is input when typeing
+    Name: "example", // The name of the command and what is input when typeing
     Description: "This is an example command", // The description provided to slash commands
+
+    // Makes a command only viewable/usable for bot owner.
+    DevOnly: true,
 
     // Permissions required to view and use a command.
     RequiredPermissions: [PermissionsBitField.Flags.KickMembers, PermissionsBitField.Flags.ModerateMembers],
@@ -19,8 +22,6 @@ module.exports = {
         {"Name": "Example2", "Description": "Example without choices and not required", "Required": false, "Type": "String", "Choices": []}
     ],
 
-    // Makes a command only viewable/usable for bot owner.
-    DevOnly: true,
 
     // Interaction is the interaction, arguements are obvious..., BotClient is the bot itself
     async execute(Interaction, PassedArguements, BotClient) {

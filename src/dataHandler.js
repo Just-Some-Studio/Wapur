@@ -54,16 +54,23 @@ class DataHandler {
             )
         `).run()
 
-        DataBase.prepare(`CREATE TABLE IF NOT EXISTS serverdata (
-            prefix STRING DEFAULT ';',
-            allowedEXPChannels STRING DEFAULT '[]',
-            allowedCommandChannels STRING DEFAULT '[]',
-            levelingChannel STRING DEFAULT '[]',
-            commandSettings STRING DEFAULT '[]',
-            itemMetadata STRING DEFAULT '[]',
-            codeMetadata STRING DEFAULT '[]',
-            )
-        `).run()
+        // DataBase.prepare(`CREATE TABLE IF NOT EXISTS serverdata (
+        //     prefix STRING DEFAULT ';',
+
+                // Data about objects on the server
+        //     itemMetadata STRING DEFAULT '[]',
+        //     codeMetadata STRING DEFAULT '[]',
+        //     ticketMetadata STRING DEFAULT '[]',
+
+                // Various server setup settings
+        //     commandSettings STRING DEFAULT '[]',
+        //     economySettings STRING DEFAULT '[]',
+        //     levelSettings STRING DEFAULT '[]',
+        //     autoThreadSettings STRING DEFAULT '[]',
+        //     loggingSettings STRING DEFAULT '[]',
+        //     autoReplySettings STRING DEFAULT '[]'
+        //     )
+        // `).run()
     }
 
     unloadDatabase(ServerID) {

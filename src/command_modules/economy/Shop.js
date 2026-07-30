@@ -1,6 +1,6 @@
-const { PermissionsBitField, StringSelectMenuBuilder, ActionRowBuilder, EmbedBuilder } = require("discord.js")
+const {PermissionsBitField, StringSelectMenuBuilder, ActionRowBuilder, EmbedBuilder} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 const ShopItems = [
     // Roles
@@ -31,7 +31,7 @@ function buildShopResponse(userCredits, userId) {
     })
 
     const Row = new ActionRowBuilder().addComponents(SelectMenu)
-    const Embed = modules.embedMessage("Use the dropdown below to select an item to purchase! \nYou can purchase the same item multiple times but they do not stack. \n\nNOTE: You can buy more than one item at a time.", "2f6fed", "Item Shop", null, null, [{ name: "Your balance", value: `${userCredits} credits`, inline: true }, { name: "Available items", value: `${ShopItems.length} purchasable options`, inline: true }])
+    const Embed = BotModules.embedMessage("Use the dropdown below to select an item to purchase! \nYou can purchase the same item multiple times but they do not stack. \n\nNOTE: You can buy more than one item at a time.", "2f6fed", "Item Shop", null, null, [{ name: "Your balance", value: `${userCredits} credits`, inline: true }, { name: "Available items", value: `${ShopItems.length} purchasable options`, inline: true }])
 
     return {
         embeds: [Embed.embeds[0]],
@@ -40,21 +40,20 @@ function buildShopResponse(userCredits, userId) {
 }
 
 module.exports = {
-    Name: "shop",
+    Name: "Shop",
     Description: "View the shop",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: true,
+
+    DevOnly: false,
+
     RequiredPermissions: [],
-    RequiresAllPermissions: true,
-    SlashCommandOptions: [
-    ],
+    SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
         const userId = message.author?.id || message.user?.id
         const guildId = message.guild?.id
 
         if (!message.guild) {
-            return message.reply(modules.embedMessage("Please use this shop in a server", "ef4444"))
+            return message.reply(BotModules.embedMessage("Please use this shop in a server", "ef4444"))
         }
 
         const userData = DataHandler.getUser(guildId, userId)

@@ -1,15 +1,17 @@
-const { PermissionsBitField, GuildAuditLogsEntry, AllowedMentionsTypes, User } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "ban",
+    Name: "Ban",
     Description: "Bans a user from the server",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: false,
-    RequiredPermissions: [PermissionsBitField.Flags.KickMembers, PermissionsBitField.Flags.ModerateMembers],
-    RequiresAllPermissions: true,
+    
+    DevOnly: false,
+
+    RequiredPermissions: [PermissionsBitField.Flags.BanMembers, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [
+        {"Name": "User", "Description": "The user to ban", "Required": true, "Type": "User", "Choices": []},
+        {"Name": "Reason", "Description": "The reason for the ban", "Required": false, "Type": "String", "Choices": []}
     ],
 
     async execute(message, arguements, botClient) {

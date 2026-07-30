@@ -1,12 +1,14 @@
-const { PermissionsBitField, GuildAuditLogsEntry, AllowedMentionsTypes } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
+const DataHandler = require("../../dataHandler.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "kick",
+    Name: "Kick",
     Description: "Kicks a player from the server",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: false,
+    
+    DevOnly: false,
+
     RequiredPermissions: [PermissionsBitField.Flags.KickMembers, PermissionsBitField.Flags.ModerateMembers],
-    RequiresAllPermissions: true,
     SlashCommandOptions: [
         {"Name": "User", "Description": "The user to kick", "Required": true, "Type": "User", "Choices": []},
         {"Name": "Reason", "Description": "The reason for the kick", "Required": false, "Type": "String", "Choices": []}

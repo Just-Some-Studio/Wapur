@@ -38,9 +38,12 @@ const BotClient = new Client({
 
 
 
-// Customizable constants
+// Bot Constants
+const CommandFolderName = "command_modules"
+const BotOwner = "969022741053341716"
+
+
 var Prefix = ";"
-var CommandFolderName = "command_modules"
 var DMMessageChannel = "1525560369018306721"
 var CommandChannel = "1060004999490445452"
 
@@ -52,6 +55,7 @@ var UsersToGainExtra = ["969022741053341716"]
 var LoggingChannel = ""
 
 var ShopEnabled = true
+
 
 
 
@@ -162,7 +166,7 @@ BotClient.on('messageCreate', async (message) => {
                 reason: "Bug report thread for discussing reports"
             })
 
-            ;(await NewThread).send(`Thank you ${message.author} for reporting a bug!
+            await NewThread.send(`Thank you ${message.author} for reporting a bug!
                 \nDue to the lack of recent updates, bugs are no longer handled by the development team`)
         } catch (ThrownError) {
             console.log(ThrownError)
@@ -180,32 +184,28 @@ BotClient.on('messageCreate', async (message) => {
 
         if (!Command || (!ShopEnabled && CommandName === "shop")) return
 
-        // Prevents people who don't have permissions from using commands
-        if (Command.AllowedUsers && Command.AllowedUsers.length > 0) {
-            if (!Command.AllowedUsers.includes(message.author.id)) {
-                return message.reply("Sorry, you don't have permission for that.")
-            }
-        } 
-        
+        // Prevents people who don't have permissions from using commands        
         if (message.channel.id !== CommandChannel && !message.member.permissions.has(PermissionsBitField.Flags.UseApplicationCommands)) {
-            return message.reply("Sorry, you don't have permission for that.")
+            return message.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
         }
 
-        if (!Command.PublicCommand) {
-            if (!message.member) return message.reply("Commands cannot be run in DMs stupid, go to the server.")
-            if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
-                if (!message.member.permissions.has(Command.RequiredPermissions, Command.RequiresAllPermissions) && !Command.AllowedUsers.includes(message.author.id)) {
-                    return message.reply("You don't have permissions, don't try that again.")
-                }
+        if (!message.member) {return message.reply("Commands cannot be run in DMs, go to a server to run commands.")}
+
+        if (Command.DevOnly && message.author.id !== BotOwner) {
+            return message.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
+        }
+
+        if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
+            if (!message.memberPermissions.has(Command.RequiredPermissions, Command.RequiresAllPermissions) && !Command.AllowedUsers.includes(message.author.id)) {
+                return message.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
             }
         }
+
+        
+
 
         // Attempts to run a command
-        try {
-            console.log(`Ran command \"${Command.Name}\" with arguements: ${PassedArguements}. 
-                User: ${message.author.username}
-                Time: ${message.createdTimestamp}`)
-            
+        try {            
             await Command.execute(message, PassedArguements, BotClient);
         } catch (ThrownError) {
             console.error(ThrownError)
@@ -254,29 +254,25 @@ BotClient.on('interactionCreate', async (interaction) => {
     // Prevents people who don't have permissions from using commands
     if (Command.AllowedUsers && Command.AllowedUsers.length > 0) {
         if (!Command.AllowedUsers.includes(interaction.user.id)) {
-            return interaction.reply("Sorry, you don't have permission for that.")
+            return message.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
         }
     } 
     
     if (interaction.channelId !== CommandChannel && !interaction.memberPermissions.has(PermissionsBitField.Flags.UseApplicationCommands)) {
-        return interaction.reply("Sorry, you don't have permission for that.")
+        return message.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
     }
 
     if (!Command.PublicCommand) {
         if (!interaction.guild) return interaction.reply("Commands cannot be run in DMs, go to a server.")
         if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
             if (!interaction.memberPermissions.has(Command.RequiredPermissions, Command.RequiresAllPermissions) && !Command.AllowedUsers.includes(interaction.user.id)) {
-                return interaction.reply("You don't have permissions, don't try that again.")
+                return message.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
             }
         }
     }
 
     // Attempts to run a command
     try {
-        console.log(`Ran command \"${Command.Name}\" with arguements: ${PassedArguements}. 
-            User: ${interaction.user.username}
-            Time: ${interaction.createdTimestamp}`)
-        
         await Command.execute(interaction, PassedArguements, BotClient);
     } catch (ThrownError) {
         console.error(ThrownError)

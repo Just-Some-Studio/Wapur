@@ -1,14 +1,14 @@
-const { PermissionsBitField } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
     Name: "query",
     Description: "Runs a custom SQL query",
-    AllowedUsers: ["969022741053341716"], // This list overrides the public command thing
-    PublicCommand: false,
+
+    DevOnly: true,
+    
     RequiredPermissions: [],
-    RequiresAllPermissions: true,
     SlashCommandOptions: [
         {"Name": "Query_Type", "Description": "The type of query to run", "Required": true, "Type": "String", "Choices": [
             {"Name": "RUN", "Value": "run"},
@@ -29,7 +29,7 @@ module.exports = {
                 return message.reply("Query executed successfully, but returned no data.")
             }
 
-            await message.reply(modules.toJSONString(QueryResult))
+            await message.reply(BotModules.toJSONString(QueryResult))
 
         } catch (ThrownError) {
             console.log(ThrownError)

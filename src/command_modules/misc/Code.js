@@ -1,18 +1,18 @@
-const { PermissionsBitField, GuildAuditLogsEntry, AllowedMentionsTypes, User } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 const Codes = [
     {"Value": "TESTCode", "Response": "You have redeemed a code for /$", "Reward": "credits_0"}
 ]
 
 module.exports = {
-    Name: "code",
+    Name: "Code",
     Description: "redeem a code for rewards (Case sensative)",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: true,
+   
+    DevOnly: false,
+
     RequiredPermissions: [],
-    RequiresAllPermissions: true,
     SlashCommandOptions: [
         {"Name": "Code", "Description": "Input a code to redeem", "Required": true, "Type": "String", "Choices": []},
     ],

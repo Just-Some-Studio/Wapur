@@ -92,7 +92,7 @@ module.exports = {
                 if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
                     const Permissions = PermissionsBitField.resolve(Command.RequiredPermissions)
                     SlashCommand.setDefaultMemberPermissions(Permissions)
-                } else if (!Command.PublicCommand && Command.AllowedUsers.length > 0 && Command.AllowedUsers.length < 2) {
+                } else if (Command.DevOnly) {
                     SlashCommand.setDefaultMemberPermissions(0n)
                 }
 

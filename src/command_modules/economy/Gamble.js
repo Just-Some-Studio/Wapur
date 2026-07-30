@@ -1,14 +1,14 @@
-const { PermissionsBitField, User } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "gamble",
+    Name: "Gamble",
     Description: "Gamble some credits for a chance to win more",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: true,
+
+    DevOnly: false,
+
     RequiredPermissions: [],
-    RequiresAllPermissions: false,
     SlashCommandOptions: [
         {"Name": "amount", "Description": "The amount of credits to gamble", "Required": true, "Type": "Integer", "Choices": []},
     ],
@@ -50,9 +50,9 @@ module.exports = {
 
             if (CooldownTimeLeft / (1000) <= 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (1000))
-                return message.reply(modules.embedMessage(`You cannot gamble again for another **${MinutesLeft}** more seconds.`, 'c9c175'))
+                return message.reply(BotModules.embedMessage(`You cannot gamble again for another **${MinutesLeft}** more seconds.`, 'c9c175'))
             } else {
-                return message.reply(modules.embedMessage(`You cannot gamble again for another **${MinutesLeft}** more minutes.`, 'c9c175'))
+                return message.reply(BotModules.embedMessage(`You cannot gamble again for another **${MinutesLeft}** more minutes.`, 'c9c175'))
             }
 
         } else if (WinChance > 50 && !WinChance < 50) {
@@ -60,20 +60,20 @@ module.exports = {
             DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "Gamble", CurrentTime)
 
             const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
-            await message.reply(modules.embedMessage(`You gambled ${Amount} and won ${CreditsEarned} for a total of ${UpdatedUser.credits}.`, '009915'))
+            await message.reply(BotModules.embedMessage(`You gambled ${Amount} and won ${CreditsEarned} for a total of ${UpdatedUser.credits}.`, '009915'))
 
 
         } else if (WinChance <= 2) {
             DataHandler.addWorkCredits(message.guild.id, userId, 0, "Lost", CurrentTime)
 
             const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
-            await message.reply(modules.embedMessage(`You hit the 2% chance to lose everything, sorry!`, 'a31a1a'))
+            await message.reply(BotModules.embedMessage(`You hit the 2% chance to lose everything, sorry!`, 'a31a1a'))
         } else {
             const CreditsEarned = Math.floor(-Amount)
             DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "Gamble", CurrentTime)
 
             const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
-            await message.reply(modules.embedMessage(`You gambled ${Amount} and lost ${Amount} for a total of ${UpdatedUser.credits}.`, 'ed7009'))
+            await message.reply(BotModules.embedMessage(`You gambled ${Amount} and lost ${Amount} for a total of ${UpdatedUser.credits}.`, 'ed7009'))
         }
     }
 }

@@ -1,12 +1,14 @@
-const { PermissionsBitField } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
+const DataHandler = require("../../dataHandler.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "purge",
+    Name: "Purge",
     Description: "Deletes a large amount of messages",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: false,
+
+    DevOnly: false,
+
     RequiredPermissions: [PermissionsBitField.Flags.ManageMessages],
-    RequiresAllPermissions: false,
     SlashCommandOptions: [
         {"Name": "Amount", "Description": "The amount of messages to delete", "Required": true, "Type": "Integer", "Choices": []}
     ],

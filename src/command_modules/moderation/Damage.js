@@ -1,13 +1,14 @@
-const { PermissionsBitField } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "damage",
+    Name: "Damage",
     Description: "Damage a user, 25 damage will result in a ban",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: false,
+
+    DevOnly: false,
+
     RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers, PermissionsBitField.Flags.ManageMessages],
-    RequiresAllPermissions: true,
     SlashCommandOptions: [
         {"Name": "User", "Description": "The user to damage", "Required": true, "Type": "User", "Choices": []},
         {"Name": "Damage", "Description": "The amount of damage to give", "Required": true, "Type": "Integer", "Choices": []},

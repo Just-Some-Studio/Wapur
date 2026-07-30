@@ -1,16 +1,15 @@
-const { PermissionsBitField } = require("discord.js")
+const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
-const modules = require("../../modules.js")
+const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "work",
+    Name: "Work",
     Description: "Work for an hour to gain credits",
-    AllowedUsers: [], // This list overrides the public command thing
-    PublicCommand: true,
+
+    DevOnly: false,
+
     RequiredPermissions: [],
-    RequiresAllPermissions: false,
-    SlashCommandOptions: [
-    ],
+    SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
         const userId = message.author?.id || message.user?.id
