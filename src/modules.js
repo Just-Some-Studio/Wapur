@@ -83,10 +83,10 @@ module.exports = {
             }
 
             const Command = require(FilePath)
-            BotClient.commands.set(Command.Name, Command)
+            BotClient.commands.set(Command.Name.toLowerCase(), Command)
             
             const SlashCommand = new SlashCommandBuilder()
-                .setName(`${Command.Name}`)
+                .setName(`${Command.Name.toLowerCase()}`)
                 .setDescription(`${Command.Description}`)
                 
                 if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {

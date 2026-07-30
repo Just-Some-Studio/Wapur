@@ -25,12 +25,12 @@ module.exports = {
             
             if (MinutesLeft > 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (60 * 60 * 1000))
-                return message.reply(modules.embedMessage(`You cannot work for another **${MinutesLeft}** more hours.`, 'c9c175'))
+                return message.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more hours.`, 'c9c175'))
             } else if (CooldownTimeLeft / (1000) <= 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (1000))
-                return message.reply(modules.embedMessage(`You cannot work for another **${MinutesLeft}** more seconds.`, 'c9c175'))
+                return message.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more seconds.`, 'c9c175'))
             } else {
-                return message.reply(modules.embedMessage(`You cannot work for another **${MinutesLeft}** more minutes.`, 'c9c175'))
+                return message.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more minutes.`, 'c9c175'))
             }
         }
 
@@ -39,6 +39,6 @@ module.exports = {
 
         const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
 
-        await message.reply(modules.embedMessage(`You worked for an hour and earned **${CreditsEarned}** credits! \nYour new balance is **${UpdatedUser.credits}** credits. Return in an hour for more credits.`, '6283b5'))
+        await message.reply(BotModules.embedMessage(`You worked for an hour and earned **${CreditsEarned}** credits! \nYour new balance is **${UpdatedUser.credits}** credits. Return in an hour for more credits.`, '6283b5'))
     }
 }
