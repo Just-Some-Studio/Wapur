@@ -4,7 +4,7 @@ const BotModules = require("../../modules.js")
 
 module.exports = {
     Name: "query",
-    Description: "Runs a custom SQL query",
+    Description: "Runs a custom SQL query for the current server",
 
     DevOnly: true,
     
@@ -15,19 +15,21 @@ module.exports = {
             {"Name": "GET", "Value": "get"},
             {"Name": "ALL", "Value": "all"},
         ]},
+        {"Name": "Server_ID", "Description": "The id of the server the query shall run on", "Required": true, "Type": "String", "Choices": []},
         {"Name": "Query_Data", "Description": "The data to use in the query", "Required": true, "Type": "String", "Choices": []}
     ],
 
     async execute(message, arguements, botClient) {
         const QueryType = arguements[0].toLowerCase()
-        const RunData = arguements.slice(1).join(" ")
+        const ServerId = arguements[1] || message.guild.id
+        const RunData = arguements.slice(2).join(" ")
 
         try {
-            const QueryResult = DataHandler.customDataQuery(message.guild.id, RunData, QueryType)
+            const QueryResult = DataHandler.customDataQuery(ServerId, RunData, QueryType)
 
             if (!QueryResult || (Array.isArray(QueryResult) && QueryResult.length === 0)) {
                 return message.reply("Query executed successfully, but returned no data.")
-            }
+            }   
 
             await message.reply(BotModules.toJSONString(QueryResult))
 

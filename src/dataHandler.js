@@ -8,11 +8,26 @@ const fs = require("fs")
 
 class DataHandler {
     constructor() {
-        this.Directory = path.join(__dirname, `data_files`)
+        this.Directory = path.join(__dirname, `data_files/ServerDataFiles`)
+        this.BotDataDirectory = path.join(__dirname, `data_files/BotDataFiles`)
 
         if (!fs.existsSync(this.Directory)) {
             fs.mkdirSync(this.Directory, { recursive: true })
         }
+        if (!fs.existsSync(this.BotDataDirectory)) {
+            fs.mkdirSync(this.BotDataDirectory, { recursive: true })
+        }  
+
+        const BotDataPath = path.join(this.BotDataDirectory, `BotData.sqlite`)
+        this.BotDataBase = new Database(BotDataPath)
+        this.BotDataBase.pragma('journal_mode = WAL');
+        this.BotDataBase.pragma('synchronous = NORMAL');
+
+        this.BotDataBase.prepare(`CREATE TABLE IF NOT EXISTS servers_pending_deletion (
+            serverId TEXT PRIMARY KEY,
+            deletionTimestamp INTEGER
+            )
+        `).run()
 
         this.Connections = new Map()
     }
@@ -24,6 +39,10 @@ class DataHandler {
 
         if (this.Connections.has(ServerID)) {
             return this.Connections.get(ServerID)
+        }
+
+        if (this.BotDataBase.prepare(`SELECT * FROM servers_pending_deletion WHERE serverId = ?`).get(ServerID)) {
+            this.BotDataBase.prepare(`DELETE FROM servers_pending_deletion WHERE serverId = ?`).run(ServerID)
         }
 
         const DataPath = path.join(this.Directory, `${ServerID}.sqlite`)
@@ -54,35 +73,116 @@ class DataHandler {
             )
         `).run()
 
-        // DataBase.prepare(`CREATE TABLE IF NOT EXISTS serverdata (
-        //     prefix STRING DEFAULT ';',
+        DataBase.prepare(`CREATE TABLE IF NOT EXISTS serverdata (
+            miscBotData STRING DEFAULT '[]',
 
-                // Data about objects on the server
-        //     itemMetadata STRING DEFAULT '[]',
-        //     codeMetadata STRING DEFAULT '[]',
-        //     ticketMetadata STRING DEFAULT '[]',
+            itemData STRING DEFAULT '[]',
+            codeData STRING DEFAULT '[]',
+            ticketData STRING DEFAULT '[]',
 
-                // Various server setup settings
-        //     commandSettings STRING DEFAULT '[]',
-        //     economySettings STRING DEFAULT '[]',
-        //     levelSettings STRING DEFAULT '[]',
-        //     autoThreadSettings STRING DEFAULT '[]',
-        //     loggingSettings STRING DEFAULT '[]',
-        //     autoReplySettings STRING DEFAULT '[]'
-        //     )
-        // `).run()
+            commandSettings STRING DEFAULT '[]',
+            economySettings STRING DEFAULT '[]',
+            levelSettings STRING DEFAULT '[]',
+            autoThreadSettings STRING DEFAULT '[]',
+            loggingSettings STRING DEFAULT '[]',
+            autoReplySettings STRING DEFAULT '[]'
+            )
+        `).run()
     }
 
     unloadDatabase(ServerID) {
         if (this.Connections.has(ServerID)) {
             this.Connections.get(ServerID).close()
-            this.connections.delete(serverId);
-            console.log(`[DATABASE] Unloaded connection pool for server: ${serverId}`);
+            this.Connections.delete(ServerID)
+
+            const DateToDelete = new Date()
+            DateToDelete.setDate(DateToDelete.getDate() + 30)
+            const DatabaseDateString = DateToDelete.toISOString().split('T')[0]
+
+            this.BotDataBase.prepare(`INSERT INTO servers_pending_deletion (serverId, deletionTimestamp) VALUES (?, ?)`).run(ServerID, DatabaseDateString)
+        }
+    }
+
+    deleteDatabase(ServerID) {
+        const DataBasePath = path.join(this.Directory, `${ServerID}.sqlite`)
+        fs.unlinkSync(DataBasePath)
+        this.BotDataBase.prepare(`DELETE FROM servers_pending_deletion WHERE serverId = ?`).run(ServerID)
+    }
+
+    reloadDatabase(ServerID) {
+        if (!ServerID || !/^\d+$/.test(ServerID)) {
+            throw new Error(`Invalid Server ID format provided: ${ServerID}`)
+        }
+
+        if (this.Connections.has(ServerID)) {
+            return this.Connections.get(ServerID)
+        }
+
+        if (this.BotDataBase.prepare(`SELECT * FROM servers_pending_deletion WHERE serverId = ?`).get(ServerID)) {
+            this.BotDataBase.prepare(`DELETE FROM servers_pending_deletion WHERE serverId = ?`).run(ServerID)
+
+            const DataPath = path.join(this.Directory, `${ServerID}.sqlite`)
+            const DataBase = new Database(DataPath)
+
+            DataBase.pragma('journal_mode = WAL');
+            DataBase.pragma('synchronous = NORMAL');
+
+            this.initilizeServerScheme(DataBase)
+
+            this.Connections.set(ServerID, DataBase)
         }
     }
 
 
-    // ----------------------------------------------------------DATABASE ACCESS---------------------------------------------------------------------------
+
+
+
+
+
+    //--------------------------------- SERVER DATA FUNCTIONS ---------------------------------
+    getServer(ServerID) {
+        const DataBase = this.getDatabaseConnection(ServerID)
+        let Server = DataBase.prepare(`SELECT * FROM serverdata`).get()
+        
+        if (!Server) {
+            DataBase.prepare(`INSERT INTO serverdata (miscBotData, itemData, codeData, ticketData, commandSettings, economySettings, levelSettings, autoThreadSettings, loggingSettings, autoReplySettings) VALUES ('[]', '[]', '[]', '[]', '[]', '[]', '[]', '[]', '[]', '[]')`).run()
+            Server = {miscBotData: '[]', itemData: '[]', codeData: '[]', ticketData: '[]', commandSettings: '[]', economySettings: '[]', levelSettings: '[]', autoThreadSettings: '[]', loggingSettings: '[]', autoReplySettings: '[]'}
+
+            const botServerData = JSON.stringify([
+                {"JoinDate": Date.now(), "InServer": true, "ServerID": ServerID},
+                null,
+                null,
+                null,
+                null
+            ])
+
+            DataBase.prepare(`UPDATE serverdata SET miscBotData = ?`).run(botServerData)
+        }
+
+        return Server
+    }
+
+    setServerSettings(ServerID, SettingType, NewSettings) {
+        const DataBase = this.getDatabaseConnection(ServerID)
+        const ValidSettingTypes = ["miscBotData", "itemData", "codeData", "ticketData", "commandSettings", "economySettings", "levelSettings", "autoThreadSettings", "loggingSettings", "autoReplySettings"]
+
+        if (!ValidSettingTypes.includes(SettingType)) {
+            console.error(`Invalid SettingType provided: ${SettingType}`)
+        }
+        
+        DataBase.prepare(`UPDATE serverdata SET ${SettingType} = ?`).run(NewSettings)
+    }
+
+
+
+
+
+
+
+
+
+    //--------------------------------- USER DATA FUNCTIONS ---------------------------------
+
 
     getUser(ServerID, userId) {
         const DataBase = this.getDatabaseConnection(ServerID)
@@ -135,6 +235,16 @@ class DataHandler {
         const DataBase = this.getDatabaseConnection(ServerID)
         DataBase.prepare(`UPDATE userdata SET warnings = ? WHERE userId = ?`).run(newJson, userId)
     }
+
+
+
+
+
+
+
+
+
+    //--------------------------------- DEVELOPMENT DATA FUNCTIONS ---------------------------------
 
     customDataQuery(ServerID, PrepareInfo, Type) {
         const DataBase = this.getDatabaseConnection(ServerID)

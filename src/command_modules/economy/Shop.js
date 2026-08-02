@@ -4,7 +4,7 @@ const BotModules = require("../../modules.js")
 
 const ShopItems = [
     // Roles
-    {"Name": "Gold Role", "Description": "Gain the gold role", "Price": 10000, "Emoji": ":yellow_circle:", "Value": "gold"},
+    {"Name": "Gold Role", "Description": "Gain the gold role", "Price": 10000, "Emoji": "🟡", "Value": "gold"},
     {"Name": "Diamond Role", "Description": "Gain the diamond role", "Price": 25000, "Emoji": "💎", "Value": "diamond"},
     {"Name": "Saphire Role", "Description": "Gain the sapphire role", "Price": 50000, "Emoji": "🔷", "Value": "sapphire"},
     {"Name": "Emerald Role", "Description": "Gain the emerald role", "Price": 75000, "Emoji": "💚", "Value": "emerald"},
@@ -16,28 +16,6 @@ const ShopItems = [
     {"Name": "Credit boost", "Description": "Earn 15% more credits (Doesn't work on gambling)", "Price": 500000, "Emoji": "💰", "Value": "credits"},
     {"Name": "Custom Role", "Description": "Get and create a custom role, requires unobtainium", "Price": 1000000, "Emoji": "🎨", "Value": "customrole"}
 ]
-
-function buildShopResponse(userCredits, userId) {
-    const SelectMenu = new StringSelectMenuBuilder()
-        .setCustomId(`shop_select_${userId}`)
-        .setPlaceholder("Choose an item to buy")
-
-    ShopItems.forEach(item => {
-        SelectMenu.addOptions({
-            label: `${item.Emoji} ${item.Name}`,
-            description: `${item.Description} • ${item.Price} credits`,
-            value: item.Value
-        })
-    })
-
-    const Row = new ActionRowBuilder().addComponents(SelectMenu)
-    const Embed = BotModules.embedMessage("Use the dropdown below to select an item to purchase! \nYou can purchase the same item multiple times but they do not stack. \n\nNOTE: You can buy more than one item at a time.", "2f6fed", "Item Shop", null, null, [{ name: "Your balance", value: `${userCredits} credits`, inline: true }, { name: "Available items", value: `${ShopItems.length} purchasable options`, inline: true }])
-
-    return {
-        embeds: [Embed.embeds[0]],
-        components: [Row]
-    }
-}
 
 module.exports = {
     Name: "Shop",
@@ -51,6 +29,28 @@ module.exports = {
     async execute(message, arguements, botClient) {
         const userId = message.author?.id || message.user?.id
         const guildId = message.guild?.id
+
+        function buildShopResponse(userCredits, userId) {
+            const SelectMenu = new StringSelectMenuBuilder()
+                .setCustomId(`shop_select_${userId}`)
+                .setPlaceholder("Choose an item to buy")
+
+            ShopItems.forEach(item => {
+                SelectMenu.addOptions({
+                    label: `${item.Emoji} ${item.Name}`,
+                    description: `${item.Description} • ${item.Price} credits`,
+                    value: item.Value
+                })
+            })
+
+            const Row = new ActionRowBuilder().addComponents(SelectMenu)
+            const Embed = BotModules.embedMessage("Use the dropdown below to select an item to purchase! \nYou can purchase the same item multiple times but they do not stack. \n\nNOTE: You can buy more than one item at a time.", "2f6fed", "Item Shop", null, null, [{ name: "Your balance", value: `${userCredits} credits`, inline: true }, { name: "Available items", value: `${ShopItems.length} purchasable options`, inline: true }])
+
+            return {
+                embeds: [Embed.embeds[0]],
+                components: [Row]
+            }
+        }
 
         if (!message.guild) {
             return message.reply(BotModules.embedMessage("Please use this shop in a server", "ef4444"))

@@ -12,6 +12,10 @@ module.exports = {
     SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
+        if (arguements.length > 0) {
+            return message.reply({content: "This command requires no arguements", ephemeral: true})
+        }
+
         const userId = message.author?.id || message.user?.id
         
         const CurrentTime = Date.now()
