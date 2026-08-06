@@ -12,7 +12,7 @@ module.exports = {
     SlashCommandOptions: [
         {"Name": "Check_Type", "Description": "The type of check to perform", "Required": false, "Type": "String", "Choices": [
             {"Name": "All", "Value": "all"},
-            {"Name": "Ping", "Value": "ping"},
+            {"Name": "Latency", "Value": "latency"},
             {"Name": "Integrity", "Value": "integrity"},
         ]}
     ],
@@ -20,7 +20,7 @@ module.exports = {
     async execute(message, arguements, botClient) {
         const CheckType = arguements[0]?.toLowerCase() || "all"
 
-        if (CheckType === "ping") {
+        if (CheckType === "latency") {
             const SentMessage = await message.reply("Pinging...")
             const BotLatency = SentMessage.createdTimestamp - message.createdTimestamp
             const APILatency = Math.round(botClient.ws.ping)
@@ -37,7 +37,7 @@ module.exports = {
 
         } else {
             return message.reply({
-                content: "Invalid arguement provided. Valid arguements are `all`, `ping`, and `integrity`",
+                content: "Invalid arguement provided. Valid arguements are `all`, `latency`, and `integrity`",
                 allowedMentions: {repliedUser: false}
             })
         }
