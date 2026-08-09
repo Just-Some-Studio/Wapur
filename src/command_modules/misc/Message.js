@@ -38,7 +38,8 @@ module.exports = {
                 file: AttachmentsToSend || null
             })
 
-            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${SentMessage}  --> Sent to user ${SelectedUser.tag}(${SelectedUser.id}) in server ${message.guild.name}(${message.guild.id})`)
+            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${SentMessage}
+                --> Sent to user ${SelectedUser.tag}(${SelectedUser.id}), in server ${message.guild.name}(${message.guild.id})`)
 
 
         } catch (ThrownError) {

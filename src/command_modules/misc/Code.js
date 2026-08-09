@@ -2,10 +2,6 @@ const {PermissionsBitField} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
-const Codes = [
-    {"Value": "TESTCode", "Response": "You have redeemed a code for /$", "Reward": "credits_0"}
-]
-
 module.exports = {
     Name: "Code",
     Description: "redeem a code for rewards (Case sensative)",

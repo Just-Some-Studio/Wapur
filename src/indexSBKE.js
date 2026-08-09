@@ -147,7 +147,8 @@ BotClient.on('messageCreate', async (message) => {
         }
 
         if (message.content.length > 0) {
-            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${message.content}`)
+            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${message.content}  
+                --> Sent to channel ${Channel.name}(${Channel.id}), in server ${Channel.guild.name}(${Channel.guild.id})`)
             await Channel.send(`Message sent from ${message.author.tag}(${message.author.id}): ${message.content}`)
         }
 

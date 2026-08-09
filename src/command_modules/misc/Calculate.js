@@ -6,7 +6,7 @@ module.exports = {
     Name: "Calculate",
     Description: "Evaluates any calculation (Can parse javascript Math API)",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [],
     SlashCommandOptions: [

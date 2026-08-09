@@ -106,6 +106,12 @@ module.exports = {
             SetupModal.addActionRowComponents(PrefixActionRow)
 
             await interaction.showModal(SetupModal)
+        } else if (interaction.customId === "ToggleLeveling") {
+            const OldLevelSettings = JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)
+            const NewLevelSettings = [...OldLevelSettings]
+            NewLevelSettings[0] = !OldLevelSettings[0]
+            DataHandler.setServerSettings(interaction.guild.id, "levelSettings", JSON.stringify(NewLevelSettings))
+            await ConfigureCommand.createLevelingMessage(interaction, botClient)
         }
     },
 
@@ -189,6 +195,21 @@ module.exports = {
             .setLabel("Moderation Settings")
             .setStyle(ButtonStyle.Secondary)
 
+        const LevelingButton = new ButtonBuilder()
+            .setCustomId("LevelingButton")
+            .setLabel("Leveling Settings")
+            .setStyle(ButtonStyle.Secondary)
+
+        const EconomyButton = new ButtonBuilder()
+            .setCustomId("EconomyButton")
+            .setLabel("Economy Settings")
+            .setStyle(ButtonStyle.Secondary)
+
+        const TicketButton = new ButtonBuilder()
+            .setCustomId("TicketButton")
+            .setLabel("Ticket Settings")
+            .setStyle(ButtonStyle.Secondary)
+
 
 
 
@@ -198,11 +219,164 @@ module.exports = {
         const SettingButtonActionRow = new ActionRowBuilder()
             .addComponents(MiscButton)
             .addComponents(ModerationButton)
+            .addComponents(TicketButton)
+            .addComponents(LevelingButton)
+            .addComponents(EconomyButton)
 
         await interaction.update({
             embeds: [Embed.embeds[0]],
             components: [ReturnButtonActionRow, SettingButtonActionRow],
             ephemeral: true
         })
-    }
+    },
+
+    async createLevelingMessage(interaction, botClient) {
+        const ReturnButton = new ButtonBuilder()
+            .setCustomId("SemiReturnButton")
+            .setLabel("Return")
+            .setStyle(ButtonStyle.Primary)
+
+        const ToggleLevelingButton = new ButtonBuilder()
+            .setCustomId("ToggleLeveling")
+
+        if (interaction.customId === "ToggleLeveling" && JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)[0] === true) {
+            ToggleLevelingButton.setLabel("Disable Leveling")
+            ToggleLevelingButton.setStyle(ButtonStyle.Danger)
+        } else {
+            ToggleLevelingButton.setLabel("Enable Leveling")
+            ToggleLevelingButton.setStyle(ButtonStyle.Success)
+        }
+
+        const LevelMessageChannelSelector = new ChannelSelectMenuBuilder()
+            .setCustomId("LevelMessageChannelSelector")
+            .setPlaceholder("Select channels to send level up messages to")
+            .setRequired(false)
+            .setMaxValues(1)
+            .setMinValues(0)
+
+        const EXPPerMessageMax = new TextInputBuilder()
+            .setCustomId("EXPPerMessage")
+            .setLabel("Maximum EXP gained")
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("eg. 1, 2, 3, 4, 5")
+            .setRequired(true)
+            .setMaxLength(5)
+
+        const EXPPerMessageMin = new TextInputBuilder()
+            .setCustomId("EXPPerMessageMin")
+            .setLabel("Minimum EXP gained")
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("eg. 1, 2, 3, 4, 5")
+            .setRequired(true)
+            .setMaxLength(5)
+
+        const EXPGainCooldown = new TextInputBuilder()
+            .setCustomId("EXPGainCooldown")
+            .setLabel("Cooldown time in seconds")
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("eg. 1, 2, 3, 4, 5")
+            .setRequired(true)
+            .setMaxLength(5)
+
+        const EXPDeniedChannelsSelector = new ChannelSelectMenuBuilder()
+            .setCustomId("EXPDeniedChannelsSelector")
+            .setPlaceholder("Select channels to deny EXP gain from messages sent")
+            .setRequired(false)
+            .setMaxValues(25)
+            .setMinValues(0)
+
+        const ReturnButtonActionRow = new ActionRowBuilder()
+            .addComponents(ReturnButton)
+
+        const LevelMessageChannelActionRow = new ActionRowBuilder()
+            .addComponents(LevelMessageChannelSelector)
+
+        const EXPPerMessageActionRow = new ActionRowBuilder()
+            .addComponents(EXPPerMessageMax)
+            .addComponents(EXPPerMessageMin)
+
+        const EXPGainCooldownActionRow = new ActionRowBuilder()
+            .addComponents(EXPGainCooldown)
+
+        const EXPDeniedChannelsActionRow = new ActionRowBuilder()
+            .addComponents(EXPDeniedChannelsSelector)
+
+        const Embed = BotModules.embedMessage(
+            "Welcome to Wapur's leveling settings! \n\nYou can change the settings for the leveling system here",
+            "fff07a",
+            "Wapur Leveling Settings",
+        )
+
+        await interaction.update({
+            embeds: [Embed.embeds[0]],
+            components: [ReturnButtonActionRow, LevelMessageChannelActionRow, EXPPerMessageActionRow, EXPGainCooldownActionRow, EXPDeniedChannelsActionRow],
+            ephemeral: true
+        })
+    },
+
+    async createEconomyMessage(interaction, botClient) {},
+
+    async createTicketMessage(interaction, botClient) {},
+    
+    async createModerationMessage(interaction, botClient) {},
+
+    async createMiscMessage(interaction, botClient) {
+        const ReturnButton = new ButtonBuilder()
+            .setCustomId("SemiReturnButton")
+            .setLabel("Return")
+            .setStyle(ButtonStyle.Primary)
+
+        const PrefixEditButton = new ButtonBuilder()
+            .setCustomId("PrefixModalBuild")
+            .setLabel("Edit prefix")
+            .setStyle(ButtonStyle.Success)
+
+        const EditAccessSelector = new RoleSelectMenuBuilder()
+            .setCustomId("EditAccessSelector")
+            .setPlaceholder("Select roles to gain access to configure this bot")
+            .setRequired(false)
+            .setMaxValues(25)
+            .setMinValues(0)
+
+        const DMMessageChannelSelector = new ChannelSelectMenuBuilder()
+            .setCustomId("DMMessageChannelSelector")
+            .setPlaceholder("Select channels to send DM messages to")
+            .setRequired(false)
+            .setMaxValues(1)
+            .setMinValues(0)
+
+        const CommandChannelSelector = new ChannelSelectMenuBuilder()
+            .setCustomId("CommandChannelSelector")
+            .setPlaceholder("Setting a command channel will make the bot only respond to commands in that channel")
+            .setRequired(false)
+            .setMaxValues(25)
+            .setMinValues(0)
+
+        const PrefixActionRow = new ActionRowBuilder()
+            .addComponents(ReturnButton)
+            .addComponents(PrefixEditButton)
+
+        const EditAccessActionRow = new ActionRowBuilder()
+            .addComponents(EditAccessSelector)
+
+        const Embed = BotModules.embedMessage(
+            "Welcome to Wapur's setup! \n\nThis page is only for prefix and configure command access \nYou can change all the other settings after this basic setup! \n\nSelect roles to give access to bot configure command",
+            "fff07a",
+            "Wapur initial setup",
+        )
+
+        const OldmiscBotData = JSON.parse(DataHandler.getServer(interaction.guild.id).miscBotData)
+        if (OldmiscBotData[1] === null || OldmiscBotData[1] === undefined || OldmiscBotData[1] === "" || OldmiscBotData[1] === "null") {
+            const NewmiscBotData = [...OldmiscBotData]
+            NewmiscBotData[1] = OldmiscBotData[1] || ";"
+            DataHandler.setServerSettings(interaction.guild.id, "miscBotData", JSON.stringify(NewmiscBotData))
+        }
+
+
+        await interaction.update({
+            embeds: [Embed.embeds[0]],
+            components: [EditAccessActionRow, PrefixActionRow],
+            ephemeral: true
+        })
+    },
 }

@@ -1,11 +1,13 @@
 require('dotenv').config()
+import chalk from "chalk"
+
+// New object and imports
+const fs = require("fs")
+const path = require("path")
+const nodeCron = require("node-cron")
+
 const DataHandler = require("./dataHandler.js")
 const BotModules = require("./modules.js")
-
-// Constants for the bot
-const fs = require('fs')
-const path = require('path')
-const nodeCron = require('node-cron')
 
 const {Client, GatewayIntentBits, Collection, PermissionsBitField, ChannelType, 
     Partials, SlashCommandBuilder, REST, Routes, EmbedBuilder, Events
@@ -89,8 +91,6 @@ BotClient.on(Events.MessageCreate, async (message) => {
     const LevelMessageChannel = levelSettings[0] || message.channel
     const EXPDeniedChannels = levelSettings[1] || []
     const ExpCooldownTime = levelSettings[2] || 25 * 1000
-    const UsersToGainExtraEXP = levelSettings[3] || []
-    const EXPRewards = levelSettings[4] || []
 
     const loggingChannels = loggingSettings[0] || []
 
@@ -132,7 +132,8 @@ BotClient.on(Events.MessageCreate, async (message) => {
         }
 
         if (message.content.length > 0) {
-            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${message.content}`)
+            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${message.content}
+                --> Sent to channel ${Channel.name}(${Channel.id}), in server ${Channel.guild.name}(${Channel.guild.id})`)
             await Channel.send(`Message sent from ${message.author.tag}(${message.author.id}): ${message.content}`)
         }
 
@@ -221,14 +222,13 @@ BotClient.on(Events.InteractionCreate, async (interaction) => {
     
     const Prefix = miscBotData[1] || ";"
     const DMMessageChannel = miscBotData[2] || ""
-    const CommandDeniedChannels = miscBotData[3] || []
+    const CommandChannels = miscBotData[3] || []
     const RolesWithEditAccess = miscBotData[4] || []
 
-    const LevelMessageChannel = levelSettings[0] || interaction.channel
-    const EXPDeniedChannels = levelSettings[1] || []
-    const ExpCooldownTime = levelSettings[2] || 25 * 1000
-    const UsersToGainExtraEXP = levelSettings[3] || []
-    const EXPRewards = levelSettings[4] || []
+    const LevelingEnabled = levelSettings[0] || false
+    const LevelMessageChannel = levelSettings[1] || interaction.channel
+    const EXPDeniedChannels = levelSettings[2] || []
+    const ExpCooldownTime = levelSettings[3] || 25 * 1000
 
     const loggingChannels = loggingSettings[0] || []
 
@@ -263,7 +263,28 @@ BotClient.on(Events.InteractionCreate, async (interaction) => {
             ConfigureCommand.createConfigureMessage(interaction, BotClient)
         } else if (interaction.customId === "ReturnButton") {
             ConfigureCommand.execute(interaction, "Return", BotClient)
+        } else if (interaction.customId === "SemiReturnButton") {
+            ConfigureCommand.createConfigureMessage(interaction, BotClient)
         }
+        
+        
+        
+        else if (interaction.customId === "LevelingButton") {
+            ConfigureCommand.createLevelingMessage(interaction, BotClient)
+        } else if (interaction.customId === "EconomyButton") {
+            ConfigureCommand.createEconomyMessage(interaction, BotClient)
+        } else if (interaction.customId === "TicketButton") {
+            ConfigureCommand.createTicketMessage(interaction, BotClient)
+        } else if (interaction.customId === "ModerationButton") {
+            ConfigureCommand.createModerationMessage(interaction, BotClient)
+        } else if (interaction.customId === "MiscButton") {
+            ConfigureCommand.createMiscMessage(interaction, BotClient)
+        }
+
+        else if (interaction.customId === "ToggleLeveling") {
+            ConfigureCommand.handleConfigure(interaction, BotClient)
+        }
+
 
 
     } else if (interaction.isModalSubmit()) {
@@ -348,7 +369,6 @@ BotClient.on(Events.InteractionCreate, async (interaction) => {
 
     // Configure has to always be available for running
     if (CommandName === "configure" && interaction.memberPermissions.has(Command.RequiredPermissions)) {
-        console.log(miscBotData[1])
         if (miscBotData[1] === null || miscBotData[1] === undefined || miscBotData[1] === "" || miscBotData[1] === "null") {
              try {
                 await Command.execute(interaction, "Not Setup", BotClient)
@@ -373,14 +393,14 @@ BotClient.on(Events.InteractionCreate, async (interaction) => {
 
 
     // Prevents people who don't have permissions from using commands
-    if (interaction.channel.id !== CommandChannel && !interaction.member.permissions.has(PermissionsBitField.Flags.UseApplicationCommands)) {
-        return interaction.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
+    if ((CommandChannels.length > 0 && !CommandChannels.includes(interaction.channel.id)) || !interaction.member.permissions.has(PermissionsBitField.Flags.UseApplicationCommands)) {
+        return
     }
 
     if (!interaction.member) {return interaction.reply("Commands cannot be run in DMs, go to a server to run commands.")}
 
     if (Command.DevOnly && interaction.author.id !== BotOwner) {
-        return interaction.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
+        return
     }
 
     if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
@@ -409,6 +429,13 @@ BotClient.on(Events.GuildCreate, async (guild) => {
 })
 
 
+BotClient.on(Events.Error, (error) => {
+    DataHandler.logError(error)
+})
+
+
+
+// Cron schedule string is `minute hour day-of-month month day-of-week`
 nodeCron.schedule('0 0 * * *', async () => {
     console.log("[CRON] Running daily cleanup task...")
 
@@ -416,7 +443,7 @@ nodeCron.schedule('0 0 * * *', async () => {
     let DeletedDatabasesCount = 0
     
     try {
-        const [RowsToDelete] = await DataHandler.BotDataBase.exec(`SELECT serverId FROM servers_pending_deletion WHERE deletionTimestamp <= ?`, [today])
+        const RowsToDelete = await DataHandler.BotDataBase.prepare(`SELECT serverId FROM servers_pending_deletion WHERE deletionTimestamp <= ?`).all(today)
         
         for (const ServerToDelete of RowsToDelete) {
             const ServerID = ServerToDelete.serverId
@@ -428,7 +455,9 @@ nodeCron.schedule('0 0 * * *', async () => {
         console.log(ThrownError)
     }
 
-    console.log(`[CRON] Daily cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`)
+    DataHandler.CleanErrorLog()
+
+    console.log(chalk.blue(`[CRON] Daily cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`))
 })
 
 // Log the bot into the account

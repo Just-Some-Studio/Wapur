@@ -23,9 +23,15 @@ class DataHandler {
         this.BotDataBase.pragma('journal_mode = WAL');
         this.BotDataBase.pragma('synchronous = NORMAL');
 
-        this.BotDataBase.prepare(`CREATE TABLE IF NOT EXISTS servers_pending_deletion (
+        this.BotDataBase.prepare(`CREATE TABLE IF NOT EXISTS serversPendingDeletion (
             serverId TEXT PRIMARY KEY,
             deletionTimestamp INTEGER
+            )
+        `).run()
+
+        this.BotDataBase.prepare(`CREATE TABLE IF NOT EXISTS errorLogs (
+            errorMessage TEXT,
+            timestamp INTEGER
             )
         `).run()
 
@@ -41,8 +47,8 @@ class DataHandler {
             return this.Connections.get(ServerID)
         }
 
-        if (this.BotDataBase.prepare(`SELECT * FROM servers_pending_deletion WHERE serverId = ?`).get(ServerID)) {
-            this.BotDataBase.prepare(`DELETE FROM servers_pending_deletion WHERE serverId = ?`).run(ServerID)
+        if (this.BotDataBase.prepare(`SELECT * FROM serversPendingDeletion WHERE serverId = ?`).get(ServerID)) {
+            this.BotDataBase.prepare(`DELETE FROM serversPendingDeletion WHERE serverId = ?`).run(ServerID)
         }
 
         const DataPath = path.join(this.Directory, `${ServerID}.sqlite`)
@@ -99,14 +105,14 @@ class DataHandler {
             DateToDelete.setDate(DateToDelete.getDate() + 30)
             const DatabaseDateString = DateToDelete.toISOString().split('T')[0]
 
-            this.BotDataBase.prepare(`INSERT INTO servers_pending_deletion (serverId, deletionTimestamp) VALUES (?, ?)`).run(ServerID, DatabaseDateString)
+            this.BotDataBase.prepare(`INSERT INTO serversPendingDeletion (serverId, deletionTimestamp) VALUES (?, ?)`).run(ServerID, DatabaseDateString)
         }
     }
 
     deleteDatabase(ServerID) {
         const DataBasePath = path.join(this.Directory, `${ServerID}.sqlite`)
         fs.unlinkSync(DataBasePath)
-        this.BotDataBase.prepare(`DELETE FROM servers_pending_deletion WHERE serverId = ?`).run(ServerID)
+        this.BotDataBase.prepare(`DELETE FROM serversPendingDeletion WHERE serverId = ?`).run(ServerID)
     }
 
     reloadDatabase(ServerID) {
@@ -118,8 +124,8 @@ class DataHandler {
             return this.Connections.get(ServerID)
         }
 
-        if (this.BotDataBase.prepare(`SELECT * FROM servers_pending_deletion WHERE serverId = ?`).get(ServerID)) {
-            this.BotDataBase.prepare(`DELETE FROM servers_pending_deletion WHERE serverId = ?`).run(ServerID)
+        if (this.BotDataBase.prepare(`SELECT * FROM serversPendingDeletion WHERE serverId = ?`).get(ServerID)) {
+            this.BotDataBase.prepare(`DELETE FROM serversPendingDeletion WHERE serverId = ?`).run(ServerID)
 
             const DataPath = path.join(this.Directory, `${ServerID}.sqlite`)
             const DataBase = new Database(DataPath)
@@ -239,6 +245,15 @@ class DataHandler {
 
 
 
+    //--------------------------------- ERROR LOGGING FUNCTIONS ---------------------------------
+
+    logError(Error) {
+        this.BotDataBase.prepare(`INSERT INTO errorLogs (errorMessage, timestamp) VALUES (?, ?)`).run(Error.message, Date.now())
+    }
+
+    CleanErrorLog() {
+        this.BotDataBase.prepare(`DELETE FROM errorLogs`).run()
+    }
 
 
 
