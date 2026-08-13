@@ -22,11 +22,13 @@ module.exports = {
     },
 
     
+    
     getExpRequiredForLevel(level) {
         if (level <= 1) return 0
         
         return Math.pow((level - 1) / 0.1, 2)
     },
+
 
 
     embedMessage(message, color, title, timestamp, footerText, fields) {
@@ -57,6 +59,7 @@ module.exports = {
     },
 
 
+
     toJSONString(stringObject) {
         const FormattedResult = JSON.stringify(stringObject, null, 2) || "Null"
 
@@ -68,8 +71,11 @@ module.exports = {
     },
 
 
+
     checkIfUserOwnsItem(message, ItemName, UserId) {
     },
+
+
 
 
     loadCommandsFromDirectory(CommandFiles, CommandFilePath, BotClient, CommandList = []) {
