@@ -1,6 +1,6 @@
 {
   "name": "WAPUR",
-  "version": "2.3.2-beta",
+  "version": "1.3.2",
   "description": "A general use open source discord bot",
   "main": "src/bot/index.js",
   "scripts": {

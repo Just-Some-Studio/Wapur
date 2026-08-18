@@ -6,7 +6,7 @@ module.exports = {
     Name: "AddEXP",
     Description: "Adds experience points to a user",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.ManageRoles, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],

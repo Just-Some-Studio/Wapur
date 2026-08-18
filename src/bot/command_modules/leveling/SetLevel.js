@@ -6,7 +6,7 @@ module.exports = {
     Name: "SetLevel",
     Description: "Sets a user's level",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers, PermissionsBitField.Flags.ManageRoles],
     SlashCommandOptions: [],

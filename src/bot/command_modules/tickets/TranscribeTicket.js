@@ -6,7 +6,7 @@ module.exports = {
     Name: "TranscribeTicket",
     Description: "Transcribes a ticket to the channel specified in the ticket settings",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],

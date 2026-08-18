@@ -6,7 +6,7 @@ module.exports = {
     Name: "Give",
     Description: "Give items to another user",
    
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [],
     SlashCommandOptions: [],

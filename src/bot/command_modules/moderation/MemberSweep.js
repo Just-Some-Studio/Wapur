@@ -6,7 +6,7 @@ module.exports = {
     Name: "MemberSweep",
     Description: "None",
    
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.KickMembers, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],

@@ -6,7 +6,7 @@ module.exports = {
     Name: "Ban",
     Description: "Bans a user from the server",
     
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.BanMembers, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [

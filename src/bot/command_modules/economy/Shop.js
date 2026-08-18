@@ -64,7 +64,6 @@ module.exports = {
     },
 
     async handleSelectMenu(interaction, botClient) {
-        console.log(interaction)
         if (!interaction.isStringSelectMenu() || !interaction.customId.startsWith("shop_select_")) {
             return
         }
@@ -111,9 +110,7 @@ module.exports = {
 
         // Purchasing the item and updating data
         let OldData = JSON.parse(DataHandler.getUser(interaction.guild.id, UserId).purchasedItems || "[]")
-
-        console.log(OldData)
-
+        
         if (OldData === "[]") {
             OldData = `[{ItemName: ${selectedItem.Name}, ItemValue: ${selectedItem.Value}, Amount: 1, PurchaseDate: ${Date.now()}}]`
         } else if (OldData.some(item => item.ItemValue === selectedItem.Value)) {

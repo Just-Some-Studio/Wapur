@@ -6,14 +6,14 @@ module.exports = {
     Name: "TicketSettings",
     Description: "Set up a new ticket button in the current channel or edit your current tickets",
    
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
         const BeginButton = new ButtonBuilder()
-            .setCustomId("BeginTicketBuildButton")
+            .setCustomId(`BeginTicketBuildButton_${message.id}`)
             .setStyle(ButtonStyle.Primary)
             .setLabel("Begin new")
 
@@ -36,7 +36,7 @@ module.exports = {
     },
 
     async newTicketSettings(interaction, botClient) {
-        
+
 
 
 
@@ -53,5 +53,31 @@ module.exports = {
 
     async editTicket(interaction, botClient) {
 
+    },
+
+    async createTicketInteraction(interaction, botClient) {
+        const InteractionId = interaction.customId.replace("", "")
+
+        const ButtonMessage = ""
+        const Message = ""
+        const Title = ""
+        const FooterText = ""
+        const TicketDataID = `${interaction.guild.id}_Ticket_${InteractionId}`
+
+        const CreateTicketButton = new ButtonBuilder()
+            .setCustomId(`Ticket_${TicketDataID}`)
+            .setLabel(ButtonMessage)
+            .setStyle(ButtonStyle.Secondary)
+
+        const ButtonActionRow = new ActionRowBuilder()
+            .addComponents(CreateTicketButton)
+        
+        const MessageEmbed = BotModules.embedMessage(Message, "23691a", Title, null, FooterText)
+
+        interaction.update({
+            content: "",
+            embeds: [MessageEmbed.embeds[0]],
+            components: [ButtonActionRow]
+        })
     }
 }

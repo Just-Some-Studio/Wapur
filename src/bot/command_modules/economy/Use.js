@@ -6,7 +6,7 @@ module.exports = {
     Name: "Use",
     Description: "Use an item",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [],
     SlashCommandOptions: [],

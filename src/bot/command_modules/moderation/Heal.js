@@ -6,7 +6,7 @@ module.exports = {
     Name: "Heal",
     Description: "Removes damage from a user",
    
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.KickMembers, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],

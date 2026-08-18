@@ -6,7 +6,7 @@ module.exports = {
     Name: "Donate",
     Description: "Support the bot's development",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [],
     SlashCommandOptions: [],

@@ -6,7 +6,7 @@ module.exports = {
     Name: "CommandUnblock",
     Description: "Unblocks a user from using commands",
     
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.BanMembers, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [

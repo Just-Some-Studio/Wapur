@@ -6,7 +6,7 @@ module.exports = {
     Name: "Joke",
     Description: "Tells a random joke",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [],
     SlashCommandOptions: [],

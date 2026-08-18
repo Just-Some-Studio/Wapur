@@ -6,7 +6,7 @@ module.exports = {
     Name: "CommandBlock",
     Description: "Blocks a user from using commands",
     
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.BanMembers, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [

@@ -6,7 +6,7 @@ module.exports = {
     Name: "CloseTicket",
     Description: "Closes a ticket",
    
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],

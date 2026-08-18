@@ -6,7 +6,7 @@ module.exports = {
     Name: "Feedback",
     Description: "Send feedback on the bot or its features",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [],
     SlashCommandOptions: [],

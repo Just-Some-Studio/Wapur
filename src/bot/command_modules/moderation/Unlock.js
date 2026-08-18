@@ -6,7 +6,7 @@ module.exports = {
     Name: "Unlock",
     Description: "Unlocks a channel",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.KickMembers, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],

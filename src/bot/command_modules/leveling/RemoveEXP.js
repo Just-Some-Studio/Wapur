@@ -6,7 +6,7 @@ module.exports = {
     Name: "RemoveEXP",
     Description: "Removes experience points from a user",
 
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.ManageRoles, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],

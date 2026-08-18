@@ -6,7 +6,7 @@ module.exports = {
     Name: "Lock",
     Description: "Locks a channel",
     
-    DevOnly: false,
+    DevOnly: true,
 
     RequiredPermissions: [PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],
