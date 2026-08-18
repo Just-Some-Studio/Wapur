@@ -3,14 +3,14 @@ const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "SetupTicket",
-    Description: "Sets up a new ticket button in the current channel",
-   
+    Name: "Donate",
+    Description: "Support the bot's development",
+
     DevOnly: false,
 
-    RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers],
+    RequiredPermissions: [],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
+    async execute(Interaction, PassedArguements, BotClient) {
     }
 }

@@ -48,7 +48,6 @@ module.exports = {
             .setLabel("Github repository")
             .setURL("https://github.com/Just-Some-Studio/Wapur")
 
-
         if (PassedArguements === "Not Setup") {
             ReplyContent = `It looks like you haven't set up the bot yet, press "Setup" to begin!`
             ConfigureButton.setLabel("Configure (Must setup first)")

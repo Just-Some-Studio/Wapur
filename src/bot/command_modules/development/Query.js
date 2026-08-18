@@ -15,14 +15,13 @@ module.exports = {
             {"Name": "GET", "Value": "get"},
             {"Name": "ALL", "Value": "all"},
         ]},
-        {"Name": "Server_ID", "Description": "The id of the server the query shall run on", "Required": true, "Type": "String", "Choices": []},
         {"Name": "Query_Data", "Description": "The data to use in the query", "Required": true, "Type": "String", "Choices": []}
     ],
 
     async execute(message, arguements, botClient) {
         const QueryType = arguements[0].toLowerCase()
-        const ServerId = arguements[1] || message.guild.id
-        const RunData = arguements.slice(2).join(" ")
+        const ServerId = message.guild.id
+        const RunData = arguements.slice(1).join(" ")
 
         try {
             const QueryResult = DataHandler.customDataQuery(ServerId, RunData, QueryType)

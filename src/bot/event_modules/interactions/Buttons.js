@@ -7,6 +7,7 @@ async function RunEvent(PassedArguements) {
     const Interaction = PassedArguements.Interaction
 
     const ConfigureCommand = BotClient.commands.get("configure")
+    const RockPaperScissorsCommand = BotClient.commands.get("rps")
 
     if (Interaction.customId ===  "Reset" || Interaction.customId ===  "PrefixModalBuild") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
@@ -36,6 +37,10 @@ async function RunEvent(PassedArguements) {
 
     else if (Interaction.customId === "ToggleLeveling") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
+    }
+
+    else if (Interaction.customId.includes("rps-Rock") || Interaction.customId.includes("rps-Scissors") || Interaction.customId.includes("rps-Paper")) {
+        RockPaperScissorsCommand.endGame(Interaction, botClient)
     }
 }
 

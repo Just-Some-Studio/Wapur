@@ -1,13 +1,16 @@
 {
   "name": "WAPUR",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.3.2-beta",
+  "description": "A general use open source discord bot",
+  "main": "src/bot/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node .",
+    "lint": "eslint .",
+    "startsbke": "node src/bot/indexSBKE.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["Discord Bot", "Open Source"],
+  "author": "Pie-Master12",
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^12.11.1",

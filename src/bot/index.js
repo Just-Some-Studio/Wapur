@@ -10,7 +10,7 @@ const DataHandler = require("./dataHandler.js")
 const BotModules = require("./modules.js")
 
 const {Client, GatewayIntentBits, Collection, PermissionsBitField, ChannelType, 
-    Partials, SlashCommandBuilder, REST, Routes, EmbedBuilder, Events
+    Partials, SlashCommandBuilder, REST, Routes, EmbedBuilder, Events, ShardingManager
 } = require("discord.js")
 
 const BotClient = new Client({

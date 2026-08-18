@@ -159,6 +159,7 @@ class DataHandler {
                 null,
                 null,
                 null,
+                null,
                 null
             ])
 

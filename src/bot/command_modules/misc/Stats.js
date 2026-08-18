@@ -3,14 +3,17 @@ const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
 module.exports = {
-    Name: "TicketSettings",
-    Description: "View and modify ticket settings",
-
+    Name: "Stats",
+    Description: "Gets bot information about the server",
+   
     DevOnly: false,
 
-    RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers],
+    RequiredPermissions: [PermissionsBitField.Flags.ManageGuild],
     SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
+        message.reply({
+            content: "The bot is currently unsharded, no stats to show here!"
+        })
     }
 }

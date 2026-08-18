@@ -47,7 +47,9 @@ module.exports = {
             NewEmbed.setTimestamp(timestamp)
         }
         if (footerText) {
-            NewEmbed.setFooter(footerText)
+            NewEmbed.setFooter({
+                text: footerText
+            })
         }
         if (fields) {
             for (const field of fields) {

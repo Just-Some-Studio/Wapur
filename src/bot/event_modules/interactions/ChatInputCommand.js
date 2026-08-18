@@ -14,6 +14,7 @@ async function RunEvent(PassedArguements) {
     const DMMessageChannel = miscBotData[2] || ""
     const CommandChannels = miscBotData[3] || []
     const RolesWithEditAccess = miscBotData[4] || []
+    const UsersBannedFromCommands = miscBotData[5] || []
 
     const LevelingEnabled = levelSettings[0] || false
     const LevelMessageChannel = levelSettings[1] || Interaction.channel

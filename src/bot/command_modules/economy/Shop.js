@@ -43,7 +43,9 @@ module.exports = {
                 })
             })
 
-            const Row = new ActionRowBuilder().addComponents(SelectMenu)
+            const Row = new ActionRowBuilder()
+                .addComponents(SelectMenu)
+                
             const Embed = BotModules.embedMessage("Use the dropdown below to select an item to purchase! \nYou can purchase the same item multiple times but they do not stack. \n\nNOTE: You can buy more than one item at a time.", "2f6fed", "Item Shop", null, null, [{ name: "Your balance", value: `${userCredits} credits`, inline: true }, { name: "Available items", value: `${ShopItems.length} purchasable options`, inline: true }])
 
             return {

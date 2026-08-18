@@ -246,6 +246,15 @@ BotClient.on('interactionCreate', async (interaction) => {
         }
 
         return
+    } else if (interaction.isButton()) {
+        const RockPaperScissorsCommand = BotClient.commands.get("rps")
+        const LeaderboardCommand = BotClient.commands.get("leaderboard")
+
+        if (interaction.customId.includes("rps-Rock") || interaction.customId.includes("rps-Scissors") || interaction.customId.includes("rps-Paper")) {
+            RockPaperScissorsCommand.endGame(interaction, BotClient)
+        } else if (interaction.customId === "LevelLeaderboard" || interaction.customId === "EconomyLeaderboard" || interaction.customId === "DailyLeaderboard") {
+            LeaderboardCommand.manageButtonInteraction(interaction, BotClient)
+        }
     }
 
     if (!interaction.isChatInputCommand()) return
