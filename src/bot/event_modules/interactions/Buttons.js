@@ -8,6 +8,7 @@ async function RunEvent(PassedArguements) {
 
     const ConfigureCommand = BotClient.commands.get("configure")
     const RockPaperScissorsCommand = BotClient.commands.get("rps")
+    const LeaderboardCommand = BotClient.commands.get("leaderboard")
 
     if (Interaction.customId ===  "Reset" || Interaction.customId ===  "PrefixModalBuild") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
@@ -41,6 +42,10 @@ async function RunEvent(PassedArguements) {
 
     else if (Interaction.customId.includes("rps-Rock") || Interaction.customId.includes("rps-Scissors") || Interaction.customId.includes("rps-Paper")) {
         RockPaperScissorsCommand.endGame(Interaction, botClient)
+    }
+
+    else if (Interaction.customId === "LevelLeaderboard" || Interaction.customId === "EconomyLeaderboard" || Interaction.customId === "DailyLeaderboard") {
+        LeaderboardCommand.manageButtonInteraction(Interaction, BotClient)
     }
 }
 
