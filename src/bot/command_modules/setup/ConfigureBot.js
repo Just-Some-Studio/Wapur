@@ -8,9 +8,9 @@ module.exports = {
     Name: "Configure",
     Description: "Change the settings and set up the bot for your server.",
 
-    DevOnly: true,
+    DevOnly: false,
 
-    RequiredPermissions: [PermissionsBitField.Flags.ManageGuild],
+    RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],
 
     async execute(Interaction, PassedArguements, BotClient) {
@@ -111,9 +111,9 @@ module.exports = {
         else if (interaction.customId === "ToggleLeveling") {
             const OldLevelSettings = JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)
             const NewLevelSettings = [...OldLevelSettings]
-            NewLevelSettings[0] = !OldLevelSettings[0]
+            NewLevelSettings[5] = !OldLevelSettings[5]
             DataHandler.setServerSettings(interaction.guild.id, "levelSettings", JSON.stringify(NewLevelSettings))
-            await ConfigureCommand.createLevelingMessage(interaction, botClient)
+            this.createLevelingMessage(interaction, botClient)
         }
 
 
@@ -124,17 +124,17 @@ module.exports = {
 
             const EXPPerMessageMax = new TextInputBuilder()
                 .setCustomId("EXPPerMessageMax")
-                .setLabel("Maximum EXP gained per message")
+                .setLabel("Maximum EXP gained")
                 .setStyle(TextInputStyle.Short)
-                .setPlaceholder("eg. 1, 2, 3, 4, 5")
+                .setPlaceholder("eg. 25")
                 .setRequired(true)
                 .setMaxLength(5)
 
             const EXPPerMessageMin = new TextInputBuilder()
                 .setCustomId("EXPPerMessageMin")
-                .setLabel("Minimum EXP gained per message")
+                .setLabel("Minimum EXP gained")
                 .setStyle(TextInputStyle.Short)
-                .setPlaceholder("eg. 1, 2, 3, 4, 5")
+                .setPlaceholder("eg. 0")
                 .setRequired(true)
                 .setMaxLength(5)
 
@@ -142,20 +142,25 @@ module.exports = {
                 .setCustomId("EXPGainCooldown")
                 .setLabel("Cooldown time in seconds")
                 .setStyle(TextInputStyle.Short)
-                .setPlaceholder("eg. 1, 2, 3, 4, 5")
+                .setPlaceholder("eg. 8")
                 .setRequired(true)
                 .setMaxLength(5)
 
-            const ExpGainActionRow = new ActionRowBuilder()
+            const ExpMaxGainActionRow = new ActionRowBuilder()
                 .addComponents(EXPPerMessageMax)
+
+            const ExpMinGainActionRow = new ActionRowBuilder()
                 .addComponents(EXPPerMessageMin)
 
             const ExpCooldownActionRow = new ActionRowBuilder()
                 .addComponents(EXPGainCooldown)
 
-            ExpModal.addActionRowComponents(EXPGainCooldown)
-                .addActionRowComponents
-            
+            ExpModal
+                .addActionRowComponents(ExpMaxGainActionRow)
+                .addActionRowComponents(ExpMinGainActionRow)
+                .addActionRowComponents(ExpCooldownActionRow)
+
+            await interaction.showModal(ExpModal)
         }
     },
 
@@ -178,7 +183,7 @@ module.exports = {
             .setStyle(ButtonStyle.Success)
 
         const ReturnButton = new ButtonBuilder()
-            .setCustomId("ReturnButton")
+            .setCustomId("ConfigSemiReturnButton")
             .setLabel("Return")
             .setStyle(ButtonStyle.Primary)
 
@@ -294,7 +299,7 @@ module.exports = {
         const ToggleLevelingButton = new ButtonBuilder()
             .setCustomId("ToggleLeveling")
 
-        if (interaction.customId === "ToggleLeveling" && JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)[0] === true) {
+        if (interaction.customId === "ToggleLeveling" && JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)[5] === true) {
             ToggleLevelingButton.setLabel("Disable Leveling")
             ToggleLevelingButton.setStyle(ButtonStyle.Danger)
         } else {
@@ -316,8 +321,15 @@ module.exports = {
             .setMaxValues(25)
             .setMinValues(0)
 
+        const ExpEditButton = new ButtonBuilder()
+            .setCustomId("LevelingModalCreate")
+            .setLabel("Edit EXP gain settings")
+            .setStyle(ButtonStyle.Secondary)
+
         const ReturnButtonActionRow = new ActionRowBuilder()
             .addComponents(ReturnButton)
+            .addComponents(ExpEditButton)
+            .addComponents(ToggleLevelingButton)
 
         const LevelMessageChannelActionRow = new ActionRowBuilder()
             .addComponents(LevelMessageChannelSelector)
@@ -338,6 +350,8 @@ module.exports = {
         })
     },
 
+
+
     async createEconomyMessage(interaction, botClient) {},
 
     async createTicketMessage(interaction, botClient) {},
@@ -346,7 +360,7 @@ module.exports = {
 
     async createMiscMessage(interaction, botClient) {
         const ReturnButton = new ButtonBuilder()
-            .setCustomId("SemiReturnButton")
+            .setCustomId("ConfigSemiReturnButton")
             .setLabel("Return")
             .setStyle(ButtonStyle.Primary)
 
@@ -383,6 +397,9 @@ module.exports = {
         const EditAccessActionRow = new ActionRowBuilder()
             .addComponents(EditAccessSelector)
 
+        const DMChannelActionRow = new ActionRowBuilder()
+            .addComponents(DMMessageChannelSelector)
+
         const Embed = BotModules.embedMessage(
             "Welcome to Wapur's setup! \n\nThis page is only for prefix and configure command access \nYou can change all the other settings after this basic setup! \n\nSelect roles to give access to bot configure command",
             "fff07a",
@@ -399,7 +416,7 @@ module.exports = {
 
         await interaction.update({
             embeds: [Embed.embeds[0]],
-            components: [EditAccessActionRow, PrefixActionRow],
+            components: [PrefixActionRow, EditAccessActionRow, DMChannelActionRow],
             ephemeral: true
         })
     },

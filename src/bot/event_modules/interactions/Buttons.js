@@ -39,10 +39,12 @@ async function RunEvent(PassedArguements) {
 
     else if (Interaction.customId === "ToggleLeveling") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
+    } else if (Interaction.customId === "LevelingModalCreate") {
+        ConfigureCommand.handleConfigure(Interaction, BotClient)
     }
 
     else if (Interaction.customId.includes("rps-Rock") || Interaction.customId.includes("rps-Scissors") || Interaction.customId.includes("rps-Paper")) {
-        RockPaperScissorsCommand.endGame(Interaction, botClient)
+        RockPaperScissorsCommand.endGame(Interaction, BotClient)
     }
 
     else if (Interaction.customId === "LevelLeaderboard" || Interaction.customId === "EconomyLeaderboard" || Interaction.customId === "DailyLeaderboard") {

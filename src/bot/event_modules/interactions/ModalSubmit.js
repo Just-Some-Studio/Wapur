@@ -54,6 +54,26 @@ async function RunEvent(PassedArguements) {
         const MinimumExpGain = Interaction.fields.getTextInputValue("EXPPerMessageMin")
         const MaximumExpGain = Interaction.fields.getTextInputValue("EXPPerMessageMax")
         const ExpGainCooldown = Interaction.fields.getTextInputValue("EXPGainCooldown")
+
+        const OldlevelBotData = JSON.parse(DataHandler.getServer(Interaction.guild.id).levelSettings)
+
+        const NewlevelBotData = [...OldlevelBotData]
+
+        if (MinimumExpGain !== "" && MinimumExpGain !== null) {
+            NewlevelBotData[4] = MinimumExpGain
+        }
+
+        if (MaximumExpGain !== "" && MaximumExpGain !== null) {
+            NewlevelBotData[3] = MaximumExpGain
+        }
+
+        if (ExpGainCooldown !== "" && ExpGainCooldown !== null) {
+            NewlevelBotData[2] = ExpGainCooldown
+        }
+
+        DataHandler.setServerSettings(Interaction.guild.id, "levelSettings", JSON.stringify(NewlevelBotData))
+
+        await Interaction.deferUpdate()
     }
 }
 

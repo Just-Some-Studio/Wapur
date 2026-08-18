@@ -1,4 +1,4 @@
-const {PermissionsBitField, ButtonBuilder, ActionRowBuilder} = require("discord.js")
+const {PermissionsBitField, ButtonBuilder, ActionRowBuilder, ButtonStyle} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 

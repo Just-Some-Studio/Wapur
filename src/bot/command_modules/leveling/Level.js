@@ -6,7 +6,7 @@ module.exports = {
     Name: "Level",
     Description: "Gets a user's level",
 
-    DevOnly: true,
+    DevOnly: false,
 
     RequiredPermissions: [],
     SlashCommandOptions: [],

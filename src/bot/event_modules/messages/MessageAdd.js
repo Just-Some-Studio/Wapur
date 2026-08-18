@@ -29,10 +29,11 @@ async function RunEvent(PassedArguements) {
     const ExpCooldownTime = levelSettings[2] * 1000 || 25 * 1000
     const MaxEXPGain = levelSettings[3] || 25
     const MinEXPGain = levelSettings[4] || 0
+    const LevelingEnabled = levelSettings[5] || false
 
     const loggingChannels = loggingSettings[0] || []
 
-    if (!EXPDeniedChannels.includes(Message.channel.id)) {
+    if (!EXPDeniedChannels.includes(Message.channel.id) && LevelingEnabled === true) {
         let GivenEXP = Math.min(Math.max(Math.floor(Math.random() * MaxEXPGain), MinEXPGain), MaxEXPGain)
 
         const CurrentTime = Date.now()
@@ -110,7 +111,7 @@ async function RunEvent(PassedArguements) {
         }
 
         if (!Message.member) {return Message.reply("Commands cannot be run in DMs, go to a server to run commands.")}
-
+        
         if (Command.DevOnly && Message.author.id !== BotOwner) {
             return
         }
@@ -120,9 +121,6 @@ async function RunEvent(PassedArguements) {
                 return
             }
         }
-
-        
-
 
         // Attempts to run a command
         try {
