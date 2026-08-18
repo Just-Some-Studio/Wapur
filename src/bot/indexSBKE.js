@@ -184,34 +184,5 @@ BotClient.on(Events.ShardResume, async (ShardId) => {
 })
 
 
-
-
-
-// Cron schedule string is `minute hour day-of-month month day-of-week`
-nodeCron.schedule('0 0 * * *', async () => {
-    console.log("[CRON] Running daily cleanup task...")
-
-    const today = new Date().toISOString().split('T')[0]
-    let DeletedDatabasesCount = 0
-    
-    try {
-        const RowsToDelete = await DataHandler.BotDataBase.prepare(`SELECT serverId FROM servers_pending_deletion WHERE deletionTimestamp <= ?`).all(today)
-        
-        for (const ServerToDelete of RowsToDelete) {
-            const ServerID = ServerToDelete.serverId
-            DataHandler.deleteDatabase(ServerID)
-            
-            DeletedDatabasesCount++
-        }
-    } catch (ThrownError) {
-        console.log(ThrownError)
-    }
-
-    DataHandler.CleanErrorLog()
-
-    console.log(chalk.blue(`[CRON] Daily cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`))
-})
-
-
 // Log the bot into the account
 BotClient.login(BotToken)

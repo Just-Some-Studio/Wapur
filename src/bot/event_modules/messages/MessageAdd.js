@@ -17,6 +17,7 @@ async function RunEvent(PassedArguements) {
     const miscBotData = JSON.parse(DataHandler.getServer(Message.guild?.id).miscBotData)
     const levelSettings = JSON.parse(DataHandler.getServer(Message.guild?.id).levelSettings)
     const loggingSettings = JSON.parse(DataHandler.getServer(Message.guild?.id).loggingSettings)
+    const economySettings = JSON.parse(DataHandler.getServer(Message.guild?.id).economySettings)
     
     const Prefix = miscBotData[1] || ";"
     const DMMessageChannel = miscBotData[2] || ""
@@ -30,6 +31,8 @@ async function RunEvent(PassedArguements) {
     const MaxEXPGain = levelSettings[3] || 25
     const MinEXPGain = levelSettings[4] || 0
     const LevelingEnabled = levelSettings[5] || false
+
+    const EconomyEnabled = economySettings[0] || false
 
     const loggingChannels = loggingSettings[0] || []
 
@@ -104,6 +107,14 @@ async function RunEvent(PassedArguements) {
         const Command = BotClient.commands.get(CommandName)
 
         if (!Command) return
+
+        if ((CommandName === "work" || CommandName === "daily" || CommandName === "shop" || CommandName === "gamble" || CommandName === "rps" || CommandName === "use" || CommandName === "give") && EconomyEnabled === false) {
+            return Message.reply("Sorry, Economy is disabled in this server.")
+        }
+
+        if ((CommandName === "level" || CommandName === "addexp" || CommandName === "removeexp" || CommandName === "setlevel") && LevelingEnabled === false) {
+            return Message.reply("Sorry, Leveling is disabled in this server.")
+        }
 
         // Prevents people who don't have permissions from using commands        
         if (CommandDeniedChannels.includes(Message.channel.id) || !Message.member.permissions.has(PermissionsBitField.Flags.UseApplicationCommands)) {

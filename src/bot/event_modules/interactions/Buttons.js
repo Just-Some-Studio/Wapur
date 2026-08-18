@@ -29,7 +29,7 @@ async function RunEvent(PassedArguements) {
         ConfigureCommand.createLevelingMessage(Interaction, BotClient)
     } else if (Interaction.customId === "ConfigEconomyButton") {
         ConfigureCommand.createEconomyMessage(Interaction, BotClient)
-    } else if (Interaction.customId === "ConfigTicketButton") {
+    } else if (Interaction.customId === "ConfigLoggingButton") {
         ConfigureCommand.createTicketMessage(Interaction, BotClient)
     } else if (Interaction.customId === "ConfigModerationButton") {
         ConfigureCommand.createModerationMessage(Interaction, BotClient)
@@ -45,6 +45,8 @@ async function RunEvent(PassedArguements) {
 
     else if (Interaction.customId.includes("rps-Rock") || Interaction.customId.includes("rps-Scissors") || Interaction.customId.includes("rps-Paper")) {
         RockPaperScissorsCommand.endGame(Interaction, BotClient)
+    } else if (Interaction.customId === "ToggleEconomy") {
+        ConfigureCommand.handleConfigure(Interaction, BotClient)
     }
 
     else if (Interaction.customId === "LevelLeaderboard" || Interaction.customId === "EconomyLeaderboard" || Interaction.customId === "DailyLeaderboard") {

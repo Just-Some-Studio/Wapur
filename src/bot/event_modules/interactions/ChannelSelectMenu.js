@@ -37,6 +37,17 @@ async function RunEvent(PassedArguements) {
         DataHandler.setServerSettings(Interaction.guild.id, "miscBotData", JSON.stringify(NewmiscBotData))
     }
 
+
+    else if (Interaction.customId === "CommandDeniedChannelSelector") {
+        const SelectedChannels = Interaction.values
+        const OldmiscBotData = JSON.parse(DataHandler.getServer(Interaction.guild.id).miscBotData)
+
+        const NewmiscBotData = [...OldmiscBotData]
+        NewmiscBotData[3] = SelectedChannels
+
+        DataHandler.setServerSettings(Interaction.guild.id, "miscBotData", JSON.stringify(NewmiscBotData))
+    }
+
     await Interaction.deferUpdate()
 }
 

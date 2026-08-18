@@ -1,6 +1,7 @@
 const chalk = require("chalk")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
+const {PermissionsBitField} = require("discord.js")
 
 async function RunEvent(PassedArguements) {
     const BotClient = PassedArguements.BotClient
@@ -10,10 +11,11 @@ async function RunEvent(PassedArguements) {
     const miscBotData = JSON.parse(DataHandler.getServer(Interaction.guild.id).miscBotData) || [";", "", [], []]
     const levelSettings = JSON.parse(DataHandler.getServer(Interaction.guild.id).levelSettings)
     const loggingSettings = JSON.parse(DataHandler.getServer(Interaction.guild.id).loggingSettings)
+    const economySettings = JSON.parse(DataHandler.getServer(Interaction.guild.id).economySettings)
     
     const Prefix = miscBotData[1] || ";"
     const DMMessageChannel = miscBotData[2] || ""
-    const CommandChannels = miscBotData[3] || []
+    const CommandDeniedChannels = miscBotData[3] || []
     const RolesWithEditAccess = miscBotData[4] || []
     const UsersBannedFromCommands = miscBotData[5] || []
 
@@ -22,10 +24,9 @@ async function RunEvent(PassedArguements) {
     const EXPDeniedChannels = levelSettings[2] || []
     const ExpCooldownTime = levelSettings[3] || 25 * 1000
 
+    const EconomyEnabled = economySettings[0] || false
+
     const loggingChannels = loggingSettings[0] || []
-
-
-
 
 
     const ArguementsToPass = []
@@ -41,6 +42,14 @@ async function RunEvent(PassedArguements) {
     })
 
     if (!Command) return
+
+    if ((CommandName === "work" || CommandName === "daily" || CommandName === "shop" || CommandName === "gamble" || CommandName === "rps" || CommandName === "use" || CommandName === "give") && EconomyEnabled === false) {
+        return Interaction.reply("Sorry, Economy is disabled in this server.")
+    }
+
+    if ((CommandName === "level" || CommandName === "addexp" || CommandName === "removeexp" || CommandName === "setlevel") && LevelingEnabled === false) {
+        return Interaction.reply("Sorry, Leveling is disabled in this server.")
+    }
 
 
     // Configure has to always be available for running
@@ -68,8 +77,8 @@ async function RunEvent(PassedArguements) {
 
 
 
-    // Prevents people who don't have permissions from using commands
-    if ((CommandChannels.length > 0 && !CommandChannels.includes(Interaction.channel.id))) {
+    // Prevents people who don't have permissions from using commands        
+    if (CommandDeniedChannels.includes(Interaction.channel.id) || !Interaction.member.permissions.has(PermissionsBitField.Flags.UseApplicationCommands)) {
         return
     }
 

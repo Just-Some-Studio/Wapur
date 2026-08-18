@@ -1,5 +1,6 @@
 const {PermissionsBitField, ButtonBuilder, ButtonInteraction, ActionRowBuilder, ButtonStyle, StringSelectMenuBuilder,
-    RoleSelectMenuBuilder, ChannelSelectMenuBuilder, UserSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle
+    RoleSelectMenuBuilder, ChannelSelectMenuBuilder, UserSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle,
+    messageLink
 } = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
@@ -33,8 +34,6 @@ module.exports = {
             .setEmoji("❗")
             .setStyle(ButtonStyle.Danger)
             .setLabel("Reset Bot")
-
-
 
         const DiscordButton = new ButtonBuilder()
             .setEmoji("🫂")
@@ -110,10 +109,22 @@ module.exports = {
         
         else if (interaction.customId === "ToggleLeveling") {
             const OldLevelSettings = JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)
+
             const NewLevelSettings = [...OldLevelSettings]
             NewLevelSettings[5] = !OldLevelSettings[5]
+
             DataHandler.setServerSettings(interaction.guild.id, "levelSettings", JSON.stringify(NewLevelSettings))
             this.createLevelingMessage(interaction, botClient)
+        }
+
+        else if (interaction.customId === "ToggleEconomy") {
+            const OldEconomySettings = JSON.parse(DataHandler.getServer(interaction.guild.id).economySettings)
+
+            const NewEconomySettings = [...OldEconomySettings]
+            NewEconomySettings[0] = !OldEconomySettings[0]
+
+            DataHandler.setServerSettings(interaction.guild.id, "economySettings", JSON.stringify(NewEconomySettings))
+            this.createEconomyMessage(interaction, botClient)
         }
 
 
@@ -261,9 +272,9 @@ module.exports = {
             .setLabel("Economy Settings")
             .setStyle(ButtonStyle.Secondary)
 
-        const TicketButton = new ButtonBuilder()
-            .setCustomId("ConfigTicketButton")
-            .setLabel("Ticket Settings")
+        const LoggingButton = new ButtonBuilder()
+            .setCustomId("ConfigLoggingButton")
+            .setLabel("Logging Settings")
             .setStyle(ButtonStyle.Secondary)
 
         const ReturnButtonActionRow = new ActionRowBuilder()
@@ -272,7 +283,7 @@ module.exports = {
         const SettingButtonActionRow = new ActionRowBuilder()
             .addComponents(MiscButton)
             .addComponents(ModerationButton)
-            .addComponents(TicketButton)
+            .addComponents(LoggingButton)
             .addComponents(LevelingButton)
             .addComponents(EconomyButton)
 
@@ -282,11 +293,6 @@ module.exports = {
             ephemeral: true
         })
     },
-
-
-
-
-
 
 
     
@@ -299,7 +305,7 @@ module.exports = {
         const ToggleLevelingButton = new ButtonBuilder()
             .setCustomId("ToggleLeveling")
 
-        if (interaction.customId === "ToggleLeveling" && JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)[5] === true) {
+        if (JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)[5] === true) {
             ToggleLevelingButton.setLabel("Disable Leveling")
             ToggleLevelingButton.setStyle(ButtonStyle.Danger)
         } else {
@@ -350,13 +356,84 @@ module.exports = {
         })
     },
 
+    async createEconomyMessage(interaction, botClient) {
+        const ReturnButton = new ButtonBuilder()
+            .setCustomId("ConfigSemiReturnButton")
+            .setLabel("Return")
+            .setStyle(ButtonStyle.Primary)
 
+        const ToggleEconomyButton = new ButtonBuilder()
+            .setCustomId("ToggleEconomy")
+            
 
-    async createEconomyMessage(interaction, botClient) {},
+        if (JSON.parse(DataHandler.getServer(interaction.guild.id).economySettings)[0] === true) {
+            ToggleEconomyButton.setLabel("Disable Economy")
+            ToggleEconomyButton.setStyle(ButtonStyle.Danger)
+        } else {
+            ToggleEconomyButton.setLabel("Enable Economy")
+            ToggleEconomyButton.setStyle(ButtonStyle.Success)
+        }
 
-    async createTicketMessage(interaction, botClient) {},
+        const ButtonActionRow = new ActionRowBuilder()
+            .addComponents(ReturnButton)
+            .addComponents(ToggleEconomyButton)
+
+        const Embed = BotModules.embedMessage(
+            "Welcome to Wapur's economy settings! \n\nYou can change the settings for the leveling system here",
+            "fff07a",
+            "Wapur Economy Settings",
+        )
+
+        await interaction.update({
+            embeds: [Embed.embeds[0]],
+            components: [ButtonActionRow],
+            ephemeral: true
+        })
+    },
     
-    async createModerationMessage(interaction, botClient) {},
+    async createModerationMessage(interaction, botClient) {
+        const ReturnButton = new ButtonBuilder()
+            .setCustomId("ConfigSemiReturnButton")
+            .setLabel("Return")
+            .setStyle(ButtonStyle.Primary)
+
+        const ButtonActionRow = new ActionRowBuilder()
+            .addComponents(ReturnButton)
+
+        const Embed = BotModules.embedMessage(
+            "Welcome to Wapur's moderation settings! \n\nThere are currently no settings to toggle, we'll come back to you when there are.",
+            "fff07a",
+            "Wapur Moderation Settings",
+        )
+
+        await interaction.update({
+            embeds: [Embed.embeds[0]],
+            components: [ButtonActionRow],
+            ephemeral: true
+        })
+    },
+
+    async createLoggingMessage(interaction, botClient) {
+        const ReturnButton = new ButtonBuilder()
+            .setCustomId("ConfigSemiReturnButton")
+            .setLabel("Return")
+            .setStyle(ButtonStyle.Primary)
+
+        const ButtonActionRow = new ActionRowBuilder()
+            .addComponents(ReturnButton)
+
+        const Embed = BotModules.embedMessage(
+            "Welcome to Wapur's logging settings! \n\nThere are currently no settings to toggle, we'll come back to you when there are.",
+            "fff07a",
+            "Wapur Logging Settings",
+        )
+
+        await interaction.update({
+            embeds: [Embed.embeds[0]],
+            components: [ButtonActionRow],
+            ephemeral: true
+        })
+    },
 
     async createMiscMessage(interaction, botClient) {
         const ReturnButton = new ButtonBuilder()
@@ -383,9 +460,9 @@ module.exports = {
             .setMaxValues(1)
             .setMinValues(0)
 
-        const CommandChannelSelector = new ChannelSelectMenuBuilder()
-            .setCustomId("CommandChannelSelector")
-            .setPlaceholder("Setting a command channel will make the bot only respond to commands in that channel")
+        const CommandDeniedChannelSelector = new ChannelSelectMenuBuilder()
+            .setCustomId("CommandDeniedChannelSelector")
+            .setPlaceholder("Channels added will no longer respond to commands")
             .setRequired(false)
             .setMaxValues(25)
             .setMinValues(0)
@@ -399,6 +476,9 @@ module.exports = {
 
         const DMChannelActionRow = new ActionRowBuilder()
             .addComponents(DMMessageChannelSelector)
+
+        const CommandDeniedActionRow = new ActionRowBuilder()
+            .addComponents(CommandDeniedChannelSelector)
 
         const Embed = BotModules.embedMessage(
             "Welcome to Wapur's setup! \n\nThis page is only for prefix and configure command access \nYou can change all the other settings after this basic setup! \n\nSelect roles to give access to bot configure command",
@@ -416,7 +496,7 @@ module.exports = {
 
         await interaction.update({
             embeds: [Embed.embeds[0]],
-            components: [PrefixActionRow, EditAccessActionRow, DMChannelActionRow],
+            components: [PrefixActionRow, EditAccessActionRow, DMChannelActionRow, CommandDeniedActionRow],
             ephemeral: true
         })
     },
