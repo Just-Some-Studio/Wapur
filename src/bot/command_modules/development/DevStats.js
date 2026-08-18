@@ -1,20 +1,35 @@
-const {PermissionsBitField} = require("discord.js")
+const {PermissionsBitField, inlineCode} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
 module.exports = {
     Name: "DevStats",
-    Description: "Gets all bot stats, including dev information",
-
+    Description: "Gets detailed bot information about the bot and the server",
+   
     DevOnly: true,
-    
-    RequiredPermissions: [PermissionsBitField.Flags.ViewAuditLog],
+
+    RequiredPermissions: [PermissionsBitField.Flags.ManageGuild],
     SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
-        const SentMessage = await message.reply("Pinging...")
-        const BotLatency = SentMessage.createdTimestamp - message.createdTimestamp
-        const APILatency = Math.round(botClient.ws.ping)
-        return SentMessage.edit(`Round trip latency: ${BotLatency} ms \nAPI Latency: ${APILatency} ms`)
+
+        const MessageEmbed = BotModules.embedMessage(
+            `The bot is currently unsharded, We will show you your shard when you get added to one! \n\nBot Owner: pie_master1`, 
+            null, 
+            "All Wapur Stats", 
+            null, 
+            null, 
+            [
+                {name: "Total Servers", value: `${botClient.guilds.cache.size}`, inline: true}, 
+                {name: "Total Users", value: `${botClient.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)}`, inline: true},
+                {name: "Cached Users", value: `${botClient.users.cache.size}`, inline: true},
+                {name: "Total Shards", value: "1", inline: true}
+            ]
+        )
+
+        message.reply({
+            content: "",
+            embeds: [MessageEmbed.embeds[0]]
+        })
     }
 }
