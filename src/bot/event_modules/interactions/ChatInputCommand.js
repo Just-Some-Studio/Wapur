@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 async function RunEvent(PassedArguements) {
     const BotClient = PassedArguements.BotClient
     const Interaction = PassedArguements.Interaction
+    const BotOwner = PassedArguements.BotOwner
 
     const miscBotData = JSON.parse(DataHandler.getServer(Interaction.guild.id).miscBotData) || [";", "", [], []]
     const levelSettings = JSON.parse(DataHandler.getServer(Interaction.guild.id).levelSettings)
@@ -74,7 +75,7 @@ async function RunEvent(PassedArguements) {
 
     if (!Interaction.member) {return Interaction.reply("Commands cannot be run in DMs, go to a server to run commands.")}
 
-    if (Command.DevOnly && Interaction.author.id !== BotOwner) {
+    if (Command.DevOnly && Interaction.user.id !== BotOwner) {
         return
     }
 

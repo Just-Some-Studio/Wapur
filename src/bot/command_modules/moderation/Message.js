@@ -1,4 +1,6 @@
-const {PermissionsBitField} = require("discord.js")
+const {PermissionsBitField, ModalBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder,
+    TextInputBuilder, TextInputStyle
+} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
@@ -16,9 +18,9 @@ module.exports = {
 
     async execute(message, arguements, botClient) {
         const SelectedUser = message.mentions.members?.first() || await botClient.users?.fetch(arguements[0])
-        const SentMessage = arguements.slice(1).join(" ") || " "
+        const Message = arguements.slice(1).join(" ") || " "
 
-        if (!SelectedUser || !SentMessage) {
+        if (!SelectedUser || !Message) {
             return message.reply({
                 content: "Invalid command arguements provided",
                 allowedMentions: {repliedUser: false}
@@ -33,17 +35,50 @@ module.exports = {
                 })
             }
 
+            const SentMessage = BotModules.embedMessage(Message, null, "Moderator sent you a message", Date.now(), `This was sent to you from: ${message.guild}`)
+
+            const ReplyButton = new ButtonBuilder()
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId(`DMReplyButton_${message.guild.id}`)
+                .setLabel("Reply to user")
+
+            const ReplyActionRow = new ActionRowBuilder()
+                .addComponents(ReplyButton)
+
             await SelectedUser.send({
-                content: SentMessage || null,
-                file: AttachmentsToSend || null
+                content: "",
+                embeds: [SentMessage.embeds[0]],
+                file: AttachmentsToSend || null,
+                components: [ReplyActionRow]
             })
 
-            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${SentMessage}
+            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${SentMessage.embeds[0].data.description}
                 --> Sent to user ${SelectedUser.tag}(${SelectedUser.id}), in server ${message.guild.name}(${message.guild.id})`)
 
 
         } catch (ThrownError) {
             console.log(ThrownError)
         }
+    },
+
+    async generateResponseModal(interaction, botClient) {
+        const ResponseModal = new ModalBuilder()
+            .setCustomId(`DMResponseSubmit_${interaction.customId.replace("DMReplyButton_", "")}`)
+            .setTitle("DM Reponse Submit")
+
+        const ResponseInput = new TextInputBuilder()
+            .setCustomId("ResponseInput")
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder("eg. Alright, Okay, Hello, Goodbye")
+            .setMaxLength(250)
+            .setRequired(false)
+            .setLabel("Input response to DM")
+
+        const ResponseActionRow = new ActionRowBuilder()
+            .addComponents(ResponseInput)
+
+        ResponseModal.addActionRowComponents(ResponseActionRow)
+
+        await interaction.showModal(ResponseModal)
     }
 }

@@ -18,7 +18,7 @@ module.exports = {
         let DeletedDatabasesCount = 0
         
         try {
-            const RowsToDelete = await DataHandler.BotDataBase.prepare(`SELECT serverId FROM servers_pending_deletion WHERE deletionTimestamp <= ?`).all(today)
+            const RowsToDelete = await DataHandler.BotDataBase.prepare(`SELECT serverId FROM serversPendingDeletion WHERE deletionTimestamp <= ?`).all(today)
             
             for (const ServerToDelete of RowsToDelete) {
                 const ServerID = ServerToDelete.serverId
@@ -33,5 +33,10 @@ module.exports = {
         DataHandler.CleanErrorLog()
     
         console.log(`[CRON] Forced cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`)
+
+        message.reply({
+            content: `[CRON] Forced cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`,
+            emphemeral: true
+        })
     }
 }

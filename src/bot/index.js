@@ -44,7 +44,7 @@ const ClientID = process.env.CLIENT_ID
 // Starting the command structure
 BotClient.commands = new Collection()
 const CommandFilePath = path.join(__dirname, CommandFolderName)
-const CommandFiles = fs.readdirSync(CommandFilePath, {withFileTypes: true}) //.filter(file => file.isFile() && file.endsWith(".js"))
+const CommandFiles = fs.readdirSync(CommandFilePath, {withFileTypes: true})
 const CommandList = BotModules.loadCommandsFromDirectory(CommandFiles, CommandFilePath, BotClient)
 
 // Created and registers slash commands
@@ -81,7 +81,7 @@ BotClient.on(Events.InteractionCreate, async (Interaction) => {
             require("./event_modules/interactions/RoleSelectMenu.js").RunEvent({BotClient, Interaction})
 
         } else if (Interaction.isChatInputCommand()) {
-            require("./event_modules/interactions/ChatInputCommand.js").RunEvent({BotClient, Interaction})
+            require("./event_modules/interactions/ChatInputCommand.js").RunEvent({BotClient, Interaction, BotOwner})
         }
     } catch (ThrownError) {
         console.log(ThrownError)
@@ -90,11 +90,11 @@ BotClient.on(Events.InteractionCreate, async (Interaction) => {
 
 
 BotClient.on(Events.MessageCreate, async (Message) => {
-    require("./event_modules/messages/MessageAdd.js").RunEvent({BotClient, Interaction})
+    require("./event_modules/messages/MessageAdd.js").RunEvent({BotClient, Message, BotOwner})
 })
 
 BotClient.on(Events.MessageDelete, async (Message) => {
-    require("./event_modules/messages/MessageRemove.js").RunEvent({BotClient, Interaction})
+    require("./event_modules/messages/MessageRemove.js").RunEvent({BotClient, Message})
 })
 
 BotClient.on(Events.MessageUpdate, async (Message) => {

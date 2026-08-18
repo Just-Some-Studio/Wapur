@@ -105,14 +105,61 @@ module.exports = {
             SetupModal.addActionRowComponents(PrefixActionRow)
 
             await interaction.showModal(SetupModal)
-        } else if (interaction.customId === "ToggleLeveling") {
+        } 
+        
+        
+        else if (interaction.customId === "ToggleLeveling") {
             const OldLevelSettings = JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)
             const NewLevelSettings = [...OldLevelSettings]
             NewLevelSettings[0] = !OldLevelSettings[0]
             DataHandler.setServerSettings(interaction.guild.id, "levelSettings", JSON.stringify(NewLevelSettings))
             await ConfigureCommand.createLevelingMessage(interaction, botClient)
         }
+
+
+        else if (interaction.customId === "LevelingModalCreate") {
+            const ExpModal = new ModalBuilder()
+                .setCustomId("LevelingModalSubmit")
+                .setTitle("Exp Gain Editor")
+
+            const EXPPerMessageMax = new TextInputBuilder()
+                .setCustomId("EXPPerMessageMax")
+                .setLabel("Maximum EXP gained per message")
+                .setStyle(TextInputStyle.Short)
+                .setPlaceholder("eg. 1, 2, 3, 4, 5")
+                .setRequired(true)
+                .setMaxLength(5)
+
+            const EXPPerMessageMin = new TextInputBuilder()
+                .setCustomId("EXPPerMessageMin")
+                .setLabel("Minimum EXP gained per message")
+                .setStyle(TextInputStyle.Short)
+                .setPlaceholder("eg. 1, 2, 3, 4, 5")
+                .setRequired(true)
+                .setMaxLength(5)
+
+            const EXPGainCooldown = new TextInputBuilder()
+                .setCustomId("EXPGainCooldown")
+                .setLabel("Cooldown time in seconds")
+                .setStyle(TextInputStyle.Short)
+                .setPlaceholder("eg. 1, 2, 3, 4, 5")
+                .setRequired(true)
+                .setMaxLength(5)
+
+            const ExpGainActionRow = new ActionRowBuilder()
+                .addComponents(EXPPerMessageMax)
+                .addComponents(EXPPerMessageMin)
+
+            const ExpCooldownActionRow = new ActionRowBuilder()
+                .addComponents(EXPGainCooldown)
+
+            ExpModal.addActionRowComponents(EXPGainCooldown)
+                .addActionRowComponents
+            
+        }
     },
+
+
 
 
 
@@ -171,6 +218,11 @@ module.exports = {
         })
     },
 
+
+
+
+
+
     async createConfigureMessage(interaction, botClient) {
         const Embed = BotModules.embedMessage(
             'You can configure the bot\'s settings here! \n\nBelow are the categories of settings you can change \nClick on the buttons to view and change the settings for each category \n\nClick "Return" to go back to the main configuration page',
@@ -179,38 +231,35 @@ module.exports = {
         )
 
         const ReturnButton = new ButtonBuilder()
-            .setCustomId("ReturnButton")
+            .setCustomId("ConfigReturnButton")
             .setLabel("Return")
             .setStyle(ButtonStyle.Primary)
 
 
         const MiscButton = new ButtonBuilder()
-            .setCustomId("MiscButton")
+            .setCustomId("ConfigMiscButton")
             .setLabel("Miscellaneous Settings")
             .setStyle(ButtonStyle.Secondary)
 
         const ModerationButton = new ButtonBuilder()
-            .setCustomId("ModerationButton")
+            .setCustomId("ConfigModerationButton")
             .setLabel("Moderation Settings")
             .setStyle(ButtonStyle.Secondary)
 
         const LevelingButton = new ButtonBuilder()
-            .setCustomId("LevelingButton")
+            .setCustomId("ConfigLevelingButton")
             .setLabel("Leveling Settings")
             .setStyle(ButtonStyle.Secondary)
 
         const EconomyButton = new ButtonBuilder()
-            .setCustomId("EconomyButton")
+            .setCustomId("ConfigEconomyButton")
             .setLabel("Economy Settings")
             .setStyle(ButtonStyle.Secondary)
 
         const TicketButton = new ButtonBuilder()
-            .setCustomId("TicketButton")
+            .setCustomId("ConfigTicketButton")
             .setLabel("Ticket Settings")
             .setStyle(ButtonStyle.Secondary)
-
-
-
 
         const ReturnButtonActionRow = new ActionRowBuilder()
             .addComponents(ReturnButton)
@@ -229,9 +278,16 @@ module.exports = {
         })
     },
 
+
+
+
+
+
+
+    
     async createLevelingMessage(interaction, botClient) {
         const ReturnButton = new ButtonBuilder()
-            .setCustomId("SemiReturnButton")
+            .setCustomId("ConfigSemiReturnButton")
             .setLabel("Return")
             .setStyle(ButtonStyle.Primary)
 
@@ -253,30 +309,6 @@ module.exports = {
             .setMaxValues(1)
             .setMinValues(0)
 
-        const EXPPerMessageMax = new TextInputBuilder()
-            .setCustomId("EXPPerMessage")
-            .setLabel("Maximum EXP gained")
-            .setStyle(TextInputStyle.Short)
-            .setPlaceholder("eg. 1, 2, 3, 4, 5")
-            .setRequired(true)
-            .setMaxLength(5)
-
-        const EXPPerMessageMin = new TextInputBuilder()
-            .setCustomId("EXPPerMessageMin")
-            .setLabel("Minimum EXP gained")
-            .setStyle(TextInputStyle.Short)
-            .setPlaceholder("eg. 1, 2, 3, 4, 5")
-            .setRequired(true)
-            .setMaxLength(5)
-
-        const EXPGainCooldown = new TextInputBuilder()
-            .setCustomId("EXPGainCooldown")
-            .setLabel("Cooldown time in seconds")
-            .setStyle(TextInputStyle.Short)
-            .setPlaceholder("eg. 1, 2, 3, 4, 5")
-            .setRequired(true)
-            .setMaxLength(5)
-
         const EXPDeniedChannelsSelector = new ChannelSelectMenuBuilder()
             .setCustomId("EXPDeniedChannelsSelector")
             .setPlaceholder("Select channels to deny EXP gain from messages sent")
@@ -290,13 +322,6 @@ module.exports = {
         const LevelMessageChannelActionRow = new ActionRowBuilder()
             .addComponents(LevelMessageChannelSelector)
 
-        const EXPPerMessageActionRow = new ActionRowBuilder()
-            .addComponents(EXPPerMessageMax)
-            .addComponents(EXPPerMessageMin)
-
-        const EXPGainCooldownActionRow = new ActionRowBuilder()
-            .addComponents(EXPGainCooldown)
-
         const EXPDeniedChannelsActionRow = new ActionRowBuilder()
             .addComponents(EXPDeniedChannelsSelector)
 
@@ -308,7 +333,7 @@ module.exports = {
 
         await interaction.update({
             embeds: [Embed.embeds[0]],
-            components: [ReturnButtonActionRow, LevelMessageChannelActionRow, EXPPerMessageActionRow, EXPGainCooldownActionRow, EXPDeniedChannelsActionRow],
+            components: [ReturnButtonActionRow, LevelMessageChannelActionRow, EXPDeniedChannelsActionRow],
             ephemeral: true
         })
     },

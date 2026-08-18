@@ -14,9 +14,47 @@ async function RunEvent(PassedArguements) {
         NewmiscBotData[1] = NewPrefix
 
         DataHandler.setServerSettings(Interaction.guild.id, "miscBotData", JSON.stringify(NewmiscBotData))
+
+        await Interaction.deferUpdate()
+    } 
+    
+    
+    
+    else if (Interaction.customId.includes("DMResponseSubmit")) {
+        const Message = Interaction.fields.getTextInputValue("ResponseInput")
+
+        const miscBotData = JSON.parse(DataHandler.getServer(Interaction.customId.replace("DMResponseSubmit_", "")).miscBotData)
+        const DMMessageChannel = BotClient.channels.cache.get(miscBotData[2]) || "None"
+
+        const SentMessage = BotModules.embedMessage(Message, null, "User DM Response", Date.now(), `This message was sent from: ${Interaction.user.id}`)
+
+        if (DMMessageChannel !== "None") {
+            console.log(`Message sent from ${Interaction.user.username}(${Interaction.user.id}): ${Message}  
+                --> Sent to channel ${DMMessageChannel.name}(${DMMessageChannel.id}), in server ${DMMessageChannel.guild.name}(${DMMessageChannel.guild.id})`)
+
+            DMMessageChannel.send({
+                content: "",
+                embeds: [SentMessage.embeds[0]]
+            })
+
+            Interaction.reply({
+                content: "Your message was sent! Moderators may take time to respond, please stand by.",
+                emphemeral: true
+            })
+        } else {
+            Interaction.reply({
+                content: "DM response messages are not enabled for that server. \nTalk to a server manager about getting that enabled if they are okay with it."
+            })
+        }
     }
 
-    await Interaction.deferUpdate()
+
+
+    else if (Interaction.customId === "LevelingModalSubmit") {
+        const MinimumExpGain = Interaction.fields.getTextInputValue("EXPPerMessageMin")
+        const MaximumExpGain = Interaction.fields.getTextInputValue("EXPPerMessageMax")
+        const ExpGainCooldown = Interaction.fields.getTextInputValue("EXPGainCooldown")
+    }
 }
 
 module.exports = {RunEvent}

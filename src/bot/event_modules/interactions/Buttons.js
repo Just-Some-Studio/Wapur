@@ -9,6 +9,7 @@ async function RunEvent(PassedArguements) {
     const ConfigureCommand = BotClient.commands.get("configure")
     const RockPaperScissorsCommand = BotClient.commands.get("rps")
     const LeaderboardCommand = BotClient.commands.get("leaderboard")
+    const MessageCommand = BotClient.commands.get("message")
 
     if (Interaction.customId ===  "Reset" || Interaction.customId ===  "PrefixModalBuild") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
@@ -16,23 +17,23 @@ async function RunEvent(PassedArguements) {
         ConfigureCommand.createSetupMessage(Interaction, BotClient)
     } else if (Interaction.customId === "Configure") {
         ConfigureCommand.createConfigureMessage(Interaction, BotClient)
-    } else if (Interaction.customId === "ReturnButton") {
+    } else if (Interaction.customId === "ConfigReturnButton") {
         ConfigureCommand.execute(Interaction, "Return", BotClient)
-    } else if (Interaction.customId === "SemiReturnButton") {
+    } else if (Interaction.customId === "ConfigSemiReturnButton") {
         ConfigureCommand.createConfigureMessage(Interaction, BotClient)
     }
     
     
     
-    else if (Interaction.customId === "LevelingButton") {
+    else if (Interaction.customId === "ConfigLevelingButton") {
         ConfigureCommand.createLevelingMessage(Interaction, BotClient)
-    } else if (Interaction.customId === "EconomyButton") {
+    } else if (Interaction.customId === "ConfigEconomyButton") {
         ConfigureCommand.createEconomyMessage(Interaction, BotClient)
-    } else if (Interaction.customId === "TicketButton") {
+    } else if (Interaction.customId === "ConfigTicketButton") {
         ConfigureCommand.createTicketMessage(Interaction, BotClient)
-    } else if (Interaction.customId === "ModerationButton") {
+    } else if (Interaction.customId === "ConfigModerationButton") {
         ConfigureCommand.createModerationMessage(Interaction, BotClient)
-    } else if (Interaction.customId === "MiscButton") {
+    } else if (Interaction.customId === "ConfigMiscButton") {
         ConfigureCommand.createMiscMessage(Interaction, BotClient)
     }
 
@@ -46,6 +47,10 @@ async function RunEvent(PassedArguements) {
 
     else if (Interaction.customId === "LevelLeaderboard" || Interaction.customId === "EconomyLeaderboard" || Interaction.customId === "DailyLeaderboard") {
         LeaderboardCommand.manageButtonInteraction(Interaction, BotClient)
+    }
+
+    else if (Interaction.customId.includes("DMReplyButton")) {
+        MessageCommand.generateResponseModal(Interaction, BotClient)
     }
 }
 
