@@ -75,7 +75,7 @@ module.exports = {
 
 
         const MessageEmbed = BotModules.embedMessage(
-            `${userId} gambles ${Amount} in hope to win more \n\nDual the bot in rock paper scissors \nWin the game, win your bet. Lose and those credits are gone.`,
+            `<@${userId}> gambles ${Amount} in hope to win more \n\nDual the bot in rock paper scissors \nWin the game, win your bet. Lose and those credits are gone.`,
             "8f34eb",
             "Gamble || Rock Paper Scissors",
             Date.now(),

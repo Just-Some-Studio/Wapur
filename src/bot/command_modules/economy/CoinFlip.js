@@ -66,7 +66,7 @@ module.exports = {
 
 
         const MessageEmbed = BotModules.embedMessage(
-            `${userId} gambles ${Amount} in hope to win more \n\nTake a guess on the coin's land \nGuess correctly and win twice your bet, guess wrong and lose twice your bet.`,
+            `<@${userId}> gambles ${Amount} in hope to win more \n\nTake a guess on the coin's land \nGuess correctly and win twice your bet, guess wrong and lose twice your bet.`,
             "8f34eb",
             "Gamble || Coin Flip",
             Date.now(),
@@ -107,7 +107,7 @@ module.exports = {
 
 
         if (PlayerChoice === "Heads" && BotChoice === "0") {
-            BotReply = "You bet on heads and flipped the coin...\n\nAnd it landed on heads so you won your bet and a little extra!"
+            BotReply = "You bet on heads and flipped the coin...\n\nAnd it landed on heads so you won your bet back and a little extra!"
             DataHandler.addWorkCredits(interaction.guild.id, interaction.user?.id, Math.floor(PlayerGambledAmount / 2), "Gamble", Date.now())
 
         } else if (PlayerChoice === "Heads" && (BotChoice === "1" || BotChoice === "2")) {
@@ -120,7 +120,7 @@ module.exports = {
             DataHandler.addWorkCredits(interaction.guild.id, interaction.user?.id, -PlayerGambledAmount, "Gamble", Date.now())
 
         } else if (PlayerChoice === "Tails" && (BotChoice === "1" || BotChoice === "2")) {
-            BotReply = "You bet on tails and flipped the coin...\n\nAnd it landed on tails so you won your bet and a little extra!"
+            BotReply = "You bet on tails and flipped the coin...\n\nAnd it landed on tails so you won your bet back and a little extra!"
             DataHandler.addWorkCredits(interaction.guild.id, interaction.user?.id, Math.floor(PlayerGambledAmount / 2), "Gamble", Date.now())
         }
 

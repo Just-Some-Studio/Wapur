@@ -45,7 +45,7 @@ module.exports = {
                 `\"Hey, Listen\"`
             )
 
-            await message.reply({
+            return message.reply({
                 content: "",
                 embeds: [MessageEmbed.embeds[0]]
             })
@@ -86,7 +86,7 @@ module.exports = {
 
 
         const MessageEmbed = BotModules.embedMessage(
-            `${userId} gambles ${Amount} in hope to win more \n\nGuess correctly to win more credits \nWinning on a green will win more than normal.`,
+            `<@${userId}> gambles ${Amount} in hope to win more \n\nGuess correctly to win more credits \nWinning on a green will win more than normal.`,
             "8f34eb",
             "Gamble || Roulette",
             Date.now(),
