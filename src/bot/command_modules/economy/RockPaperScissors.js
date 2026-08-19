@@ -149,6 +149,8 @@ module.exports = {
             BotReply = "The bot picked scissors and you tied, here's your bet back."
         }
 
+        const UserData = DataHandler.getUser(interaction.guild.id, interaction.user.id)
+
         const MessageEmbed = BotModules.embedMessage(
             BotReply,
             "8f34eb",
@@ -157,10 +159,10 @@ module.exports = {
             `Your current balance is ${UserData.credits}`
         )
 
-        message.reply({
+        interaction.update({
             content: "", 
             embeds: [MessageEmbed.embeds[0]],
-            components: [GameActionRow],
+            components: [],
         })
     }
 }
