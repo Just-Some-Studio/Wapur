@@ -191,7 +191,7 @@ nodeCron.schedule('0 0 * * *', async () => {
     let DeletedDatabasesCount = 0
     
     try {
-        const RowsToDelete = await DataHandler.BotDataBase.prepare(`SELECT serverId FROM servers_pending_deletion WHERE deletionTimestamp <= ?`).all(today)
+        const RowsToDelete = await DataHandler.BotDataBase.prepare(`SELECT serverId FROM serversPendingDeletion WHERE deletionTimestamp <= ?`).all(today)
         
         for (const ServerToDelete of RowsToDelete) {
             const ServerID = ServerToDelete.serverId
@@ -205,7 +205,7 @@ nodeCron.schedule('0 0 * * *', async () => {
 
     DataHandler.CleanErrorLog()
 
-    console.log(chalk.blue(`[CRON] Daily cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`))
+    console.log(`[CRON] Daily cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`)
 })
 
 

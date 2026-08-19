@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "query",
     Description: "Runs a custom SQL query for the current server",
+    Subset: "Development",
 
     DevOnly: true,
     

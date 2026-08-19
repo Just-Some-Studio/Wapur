@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Calculate",
     Description: "Evaluates any calculation (Can parse javascript Math API)",
+    Subset: "Development",
 
     DevOnly: true,
 

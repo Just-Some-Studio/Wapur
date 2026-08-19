@@ -10,6 +10,8 @@ async function RunEvent(PassedArguements) {
     const RockPaperScissorsCommand = BotClient.commands.get("rps")
     const LeaderboardCommand = BotClient.commands.get("leaderboard")
     const MessageCommand = BotClient.commands.get("message")
+    const CoinFlipCommand = BotClient.commands.get("coinflip")
+    const RouletteCommand = BotClient.commands.get("roulette")
 
     if (Interaction.customId ===  "Reset" || Interaction.customId ===  "PrefixModalBuild") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
@@ -47,6 +49,10 @@ async function RunEvent(PassedArguements) {
         RockPaperScissorsCommand.endGame(Interaction, BotClient)
     } else if (Interaction.customId === "ToggleEconomy") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
+    } else if (Interaction.customId.includes("Coin_Heads_") || Interaction.customId.includes("Coin_Tails_")) {
+        CoinFlipCommand.endGame(Interaction, BotClient)
+    } else if (Interaction.customId.includes("Roul_Red") || Interaction.customId.includes("Roul_Black") || Interaction.customId.includes("Roul_Green")) {
+        RouletteCommand.endGame(Interaction, BotClient)
     }
 
     else if (Interaction.customId === "LevelLeaderboard" || Interaction.customId === "EconomyLeaderboard" || Interaction.customId === "DailyLeaderboard") {

@@ -7,6 +7,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Message",
     Description: "Messages a player in DMs",
+    Subset: "Misc",
    
     DevOnly: false,
 
@@ -17,7 +18,7 @@ module.exports = {
     ],
 
     async execute(message, arguements, botClient) {
-        const SelectedUser = message.mentions.members?.first() || await botClient.users?.fetch(arguements[0])
+        const SelectedUser = message.options?.getUser('user') || message.mentions?.members?.first() || await botClient.users?.fetch(arguements[0])
         const Message = arguements.slice(1).join(" ") || " "
 
         if (!SelectedUser || !Message) {
@@ -28,13 +29,6 @@ module.exports = {
         }
 
         try {
-            const AttachmentsToSend = []
-            if (message.attachments.size > 0) {
-                message.attachments.forEach(attachment => {
-                    AttachmentsToSend.push(attachment.url)
-                })
-            }
-
             const SentMessage = BotModules.embedMessage(Message, null, "Moderator sent you a message", Date.now(), `This was sent to you from: ${message.guild}`)
 
             const ReplyButton = new ButtonBuilder()
@@ -48,14 +42,17 @@ module.exports = {
             await SelectedUser.send({
                 content: "",
                 embeds: [SentMessage.embeds[0]],
-                file: AttachmentsToSend || null,
                 components: [ReplyActionRow]
             })
 
-            console.log(`Message sent from ${message.author.tag}(${message.author.id}): ${SentMessage.embeds[0].data.description}
-                --> Sent to user ${SelectedUser.tag}(${SelectedUser.id}), in server ${message.guild.name}(${message.guild.id})`)
+            console.log(`Message sent from ${message.user.username}(${message.user.id}): ${SentMessage.embeds[0].data.description}
+                --> Sent to user ${SelectedUser.username}(${SelectedUser.id}), in server ${message.guild.name}(${message.guild.id})`)
 
-
+            message.reply({
+                content: "Message was sent to user successfully",
+                ephemeral: true
+            })
+            
         } catch (ThrownError) {
             console.log(ThrownError)
         }

@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "CommandUnblock",
     Description: "Unblocks a user from using commands",
+    Subset: "Moderation",
     
     DevOnly: true,
 

@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "rps",
     Description: "Gamble some credits in a game to win more",
+    Subset: "Economy",
 
     DevOnly: false,
 
@@ -73,8 +74,17 @@ module.exports = {
             .addComponents(ScissorsButton)
 
 
+        const MessageEmbed = BotModules.embedMessage(
+            `${userId} gambles ${Amount} in hope to win more \n\nDual the bot in rock paper scissors \nWin the game, win your bet. Lose and those credits are gone.`,
+            "8f34eb",
+            "Gamble || Rock Paper Scissors",
+            Date.now(),
+            `Your current balance is ${UserData.credits}`
+        )
+
         message.reply({
-            content: "Rock, paper or scissors.", 
+            content: "", 
+            embeds: [MessageEmbed.embeds[0]],
             components: [GameActionRow],
         })
     },
@@ -139,10 +149,18 @@ module.exports = {
             BotReply = "The bot picked scissors and you tied, here's your bet back."
         }
 
-        interaction.update({
-            content: BotReply,
-            components: [],
-            emphemeral: false
+        const MessageEmbed = BotModules.embedMessage(
+            BotReply,
+            "8f34eb",
+            "Gamble || Rock Paper Scissors",
+            Date.now(),
+            `Your current balance is ${UserData.credits}`
+        )
+
+        message.reply({
+            content: "", 
+            embeds: [MessageEmbed.embeds[0]],
+            components: [GameActionRow],
         })
     }
 }

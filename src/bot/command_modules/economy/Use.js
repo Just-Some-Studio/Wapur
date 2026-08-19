@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Use",
     Description: "Use an item",
+    Subset: "Economy",
 
     DevOnly: true,
 

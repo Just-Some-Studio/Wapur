@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Work",
     Description: "Work for an hour to gain credits",
+    Subset: "Economy",
 
     DevOnly: false,
 
@@ -12,10 +13,6 @@ module.exports = {
     SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
-        if (arguements.length > 0) {
-            return message.reply({content: "This command requires no arguements", ephemeral: true, allowedMentions: {repliedUser: false}})
-        }
-
         const userId = message.author?.id || message.user?.id
         
         const CurrentTime = Date.now()
@@ -43,6 +40,17 @@ module.exports = {
 
         const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
 
-        await message.reply(BotModules.embedMessage(`You worked for an hour and earned **${CreditsEarned}** credits! \nYour new balance is **${UpdatedUser.credits}** credits. Return in an hour for more credits.`, '6283b5'))
+        const MessageEmbed = BotModules.embedMessage(
+            `You worked for an hour and gained **${CreditsEarned}** credits! \n\nCome back in an hour to work again for some more credits`,
+            "6283b5",
+            "Hourly credit paycheck",
+            Date.now(),
+            `Your current balance is: ${UpdatedUser.credits}`
+        )
+
+        await message.reply({
+            content: "",
+            embeds: [MessageEmbed.embeds[0]]
+        })
     }
 }

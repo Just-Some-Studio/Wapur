@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Profile",
     Description: "View your profile information",
+    Subset: "Utility",
 
     DevOnly: false,
 

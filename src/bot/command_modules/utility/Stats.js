@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Stats",
     Description: "Gets bot information about the bot and your server",
+    Subset: "Utility",
    
     DevOnly: false,
 

@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "ChangeCode",
     Description: "Add a new code to your server",
+    Subset: "Setup",
 
     DevOnly: true,
 

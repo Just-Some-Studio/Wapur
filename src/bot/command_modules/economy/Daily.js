@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Daily",
     Description: "Work for a day to gain credtis",
+    Subset: "Economy",
 
     DevOnly: false,
 
@@ -12,10 +13,6 @@ module.exports = {
     SlashCommandOptions: [],
 
     async execute(message, arguements, botClient) {
-        if (arguements.length > 0) {
-            return message.reply({content: "This command requires no arguements", ephemeral: true})
-        }
-
         const userId = message.author?.id || message.user?.id
         
         const CurrentTime = Date.now()
@@ -43,7 +40,18 @@ module.exports = {
             DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "DailyLost", CurrentTime)
 
             const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
-            await message.reply(BotModules.embedMessage(`Here is your daily reward: **${CreditsEarned}** credits! \nYou have lost your daily streak and restart from **${UpdatedUser.dailyStreak}**.`, '6283b5'))
+            const MessageEmbed = BotModules.embedMessage(
+                `You claimed your daily bonus of **${CreditsEarned}** credits! \n\nYou forgot to claim your bonus yesterday and your reset to **${UpdatedUser.dailyStreak}**, Come back in a day for another bonus.`,
+                "6283b5",
+                "Daily credit bonus",
+                Date.now(),
+                `Your current balance is: ${UpdatedUser.credits}`
+            )
+
+            await message.reply({
+                content: "",
+                embeds: [MessageEmbed.embeds[0]]
+            })
 
 
         } else {
@@ -51,7 +59,19 @@ module.exports = {
             DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "DailyKept", CurrentTime)
 
             const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
-            await message.reply(BotModules.embedMessage(`Here is your daily reward: **${CreditsEarned}** credits! \nYou have used daily **${UpdatedUser.dailyStreak}** days in a row.`, '6283b5'))
+
+            const MessageEmbed = BotModules.embedMessage(
+                `You claimed your daily bonus of **${CreditsEarned}** credits! \n\nYour current streak is **${UpdatedUser.dailyStreak}**, Come back in a day for another bonus.`,
+                "6283b5",
+                "Daily credit bonus",
+                Date.now(),
+                `Your current balance is: ${UpdatedUser.credits}`
+            )
+
+            await message.reply({
+                content: "",
+                embeds: [MessageEmbed.embeds[0]]
+            })
         }
     }
 }

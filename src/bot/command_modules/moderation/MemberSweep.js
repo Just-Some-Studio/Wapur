@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "MemberSweep",
     Description: "None",
+    Subset: "Moderation",
    
     DevOnly: true,
 

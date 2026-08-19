@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Heal",
     Description: "Removes damage from a user",
+    Subset: "Moderation",
    
     DevOnly: true,
 

@@ -43,12 +43,12 @@ async function RunEvent(PassedArguements) {
 
     if (!Command) return
 
-    if ((CommandName === "work" || CommandName === "daily" || CommandName === "shop" || CommandName === "gamble" || CommandName === "rps" || CommandName === "use" || CommandName === "give") && EconomyEnabled === false) {
-        return Interaction.reply("Sorry, Economy is disabled in this server.")
+    if (Command.Subset === "Economy" && EconomyEnabled === false) {
+        return Message.reply("Sorry, Economy is disabled in this server.")
     }
 
-    if ((CommandName === "level" || CommandName === "addexp" || CommandName === "removeexp" || CommandName === "setlevel") && LevelingEnabled === false) {
-        return Interaction.reply("Sorry, Leveling is disabled in this server.")
+    if (Command.Subset === "Leveling" && LevelingEnabled === false) {
+        return Message.reply("Sorry, Leveling is disabled in this server.")
     }
 
 
@@ -78,7 +78,7 @@ async function RunEvent(PassedArguements) {
 
 
     // Prevents people who don't have permissions from using commands        
-    if (CommandDeniedChannels.includes(Interaction.channel.id) || !Interaction.member.permissions.has(PermissionsBitField.Flags.UseApplicationCommands)) {
+    if (CommandDeniedChannels.includes(Interaction.channel.id)) {
         return
     }
 

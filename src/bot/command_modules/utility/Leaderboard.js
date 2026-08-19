@@ -7,6 +7,7 @@ const dataHandler = require("../../dataHandler.js")
 module.exports = {
     Name: "Leaderboard",
     Description: "Get various leaderboards",
+    Subset: "Utility",
 
     DevOnly: false,
 

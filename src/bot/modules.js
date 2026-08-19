@@ -18,7 +18,7 @@ module.exports = {
     getLevelFromXp(exp) {
         if (!exp || exp <= 0) return 1
         
-        return Math.floor(0.1 * Math.sqrt(exp)) + 1
+        return Math.floor(0.10 * Math.sqrt(exp)) + 1
     },
 
     
@@ -26,7 +26,7 @@ module.exports = {
     getExpRequiredForLevel(level) {
         if (level <= 1) return 0
         
-        return Math.pow((level - 1) / 0.1, 2)
+        return Math.pow((level - 1) / 0.10, 2)
     },
 
 

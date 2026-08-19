@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "AFK",
     Description: "Sets an afk status to tell others you won't be available",
+    Subset: "Utility",
 
     DevOnly: true,
 

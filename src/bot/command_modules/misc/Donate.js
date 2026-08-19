@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Donate",
     Description: "Support the bot's development",
+    Subset: "Misc",
 
     DevOnly: true,
 

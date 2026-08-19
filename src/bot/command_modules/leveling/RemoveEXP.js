@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "RemoveEXP",
     Description: "Removes experience points from a user",
+    Subset: "Leveling",
 
     DevOnly: true,
 

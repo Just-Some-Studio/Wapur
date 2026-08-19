@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Kick",
     Description: "Kicks a player from the server",
+    Subset: "Moderation",
     
     DevOnly: false,
 

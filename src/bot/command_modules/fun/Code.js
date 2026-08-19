@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Code",
     Description: "redeem a code for rewards (Case sensative)",
+    Subset: "Fun",
    
     DevOnly: true,
 

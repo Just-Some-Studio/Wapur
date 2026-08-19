@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "forcecleandatabases",
     Description: "Forces the cleanup of pending databases that are scheduled for deletion.",
+    Subset: "Development",
 
     DevOnly: true,
     

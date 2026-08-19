@@ -20,6 +20,7 @@ const ShopItems = [
 module.exports = {
     Name: "Shop",
     Description: "View the shop",
+    Subset: "Economy",
 
     DevOnly: false,
 

@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Warn",
     Description: "Warns a user",
+    Subset: "Moderation",
 
     DevOnly: false,
 

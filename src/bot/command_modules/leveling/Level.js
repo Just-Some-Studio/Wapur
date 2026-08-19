@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Level",
     Description: "Gets a user's level",
+    Subset: "Leveling",
 
     DevOnly: false,
 

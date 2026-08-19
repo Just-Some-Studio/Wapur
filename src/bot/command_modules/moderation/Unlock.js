@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Unlock",
     Description: "Unlocks a channel",
+    Subset: "Moderation",
 
     DevOnly: true,
 

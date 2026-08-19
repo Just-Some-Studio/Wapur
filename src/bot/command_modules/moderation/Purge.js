@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Purge",
     Description: "Deletes a large amount of messages",
+    Subset: "Moderation",
 
     DevOnly: false,
 

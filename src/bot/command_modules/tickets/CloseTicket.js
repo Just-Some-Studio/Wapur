@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "CloseTicket",
     Description: "Closes a ticket",
+    Subset: "Ticket",
    
     DevOnly: true,
 

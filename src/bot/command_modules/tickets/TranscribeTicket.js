@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "TranscribeTicket",
     Description: "Transcribes a ticket to the channel specified in the ticket settings",
+    Subset: "Ticket",
 
     DevOnly: true,
 

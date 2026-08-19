@@ -5,6 +5,7 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "Give",
     Description: "Give items to another user",
+    Subset: "Economy",
    
     DevOnly: true,
 
