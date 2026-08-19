@@ -72,7 +72,7 @@ module.exports = {
             DailyStreakButton.setStyle(ButtonStyle.Primary)
             EconomyButton.setStyle(ButtonStyle.Secondary)
 
-            const LeaderboardData = dataHandler.customDataQuery(interaction.guild.id, "SELECT dailyStreak, userId FROM userdata ORDER BY dailyStreak DESC LIMIT 15", "all")
+            const LeaderboardData = dataHandler.customDataQuery(interaction.guild.id, "SELECT dailyStreak, userId FROM userdata WHERE (unixepoch('now') * 1000) - lastDaily < 2 * 24 * 60 * 60 * 1000 ORDER BY dailyStreak DESC LIMIT 15", "all")
 
             const LeaderboardMessageBroken = LeaderboardData.map((userData, index) => {
                 return `${index + 1}\u200B. <@${userData.userId}>: ${parseInt(userData.dailyStreak)} days`
