@@ -12,13 +12,13 @@ module.exports = {
     RequiredPermissions: [],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
-        const userId = message.author?.id || message.user?.id
+    async execute(Interaction, PassedArguments, BotClient) {
+        const userId = Interaction.author?.id || Interaction.user?.id
         
         const CurrentTime = Date.now()
         const CooldownTime = 60 * 60 * 1000
 
-        const UserData = DataHandler.getUser(message.guild.id, userId)
+        const UserData = DataHandler.getUser(Interaction.guild.id, userId)
 
         if (CurrentTime - UserData.lastWorked < CooldownTime) {
             const CooldownTimeLeft = CooldownTime - (CurrentTime - UserData.lastWorked)
@@ -26,19 +26,19 @@ module.exports = {
             
             if (MinutesLeft > 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (60 * 60 * 1000))
-                return message.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more hours.`, 'c9c175'))
+                return Interaction.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more hours.`, 'c9c175'))
             } else if (CooldownTimeLeft / (1000) <= 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (1000))
-                return message.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more seconds.`, 'c9c175'))
+                return Interaction.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more seconds.`, 'c9c175'))
             } else {
-                return message.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more minutes.`, 'c9c175'))
+                return Interaction.reply(BotModules.embedMessage(`You cannot work for another **${MinutesLeft}** more minutes.`, 'c9c175'))
             }
         }
 
         const CreditsEarned = Math.floor(Math.random() * 300) + 1
-        DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "Work", CurrentTime)
+        DataHandler.addWorkCredits(Interaction.guild.id, userId, CreditsEarned, "Work", CurrentTime)
 
-        const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
+        const UpdatedUser = DataHandler.getUser(Interaction.guild.id, userId)
 
         const MessageEmbed = BotModules.embedMessage(
             `You worked for an hour and gained **${CreditsEarned}** credits! \n\nCome back in an hour to work again for some more credits`,
@@ -48,7 +48,7 @@ module.exports = {
             `Your current balance is: ${UpdatedUser.credits}`
         )
 
-        await message.reply({
+        await Interaction.reply({
             content: "",
             embeds: [MessageEmbed.embeds[0]]
         })

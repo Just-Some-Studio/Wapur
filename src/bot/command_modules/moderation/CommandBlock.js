@@ -14,6 +14,6 @@ module.exports = {
         {"Name": "User", "Description": "The user to blacklist", "Required": true, "Type": "User", "Choices": []},
     ],
 
-    async execute(message, arguements, botClient) {
+    async execute(Interaction, PassedArguments, BotClient) {
     }
 }

@@ -1,7 +1,7 @@
 const chalk = require("chalk")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
-const {PermissionsBitField} = require("discord.js")
+const {MessageFlags} = require("discord.js")
 
 async function RunEvent(PassedArguements) {
     const BotClient = PassedArguements.BotClient
@@ -19,10 +19,12 @@ async function RunEvent(PassedArguements) {
     const RolesWithEditAccess = miscBotData[4] || []
     const UsersBannedFromCommands = miscBotData[5] || []
 
-    const LevelingEnabled = levelSettings[0] || false
-    const LevelMessageChannel = levelSettings[1] || Interaction.channel
-    const EXPDeniedChannels = levelSettings[2] || []
-    const ExpCooldownTime = levelSettings[3] || 25 * 1000
+    const LevelMessageChannel = levelSettings[0] || Interaction.channel.id
+    const EXPDeniedChannels = levelSettings[1] || []
+    const ExpCooldownTime = levelSettings[2] * 1000 || 25 * 1000
+    const MaxEXPGain = levelSettings[3] || 25
+    const MinEXPGain = levelSettings[4] || 0
+    const LevelingEnabled = levelSettings[5] || false
 
     const EconomyEnabled = economySettings[0] || false
 
@@ -90,7 +92,7 @@ async function RunEvent(PassedArguements) {
 
     if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
         if (!Interaction.memberPermissions.has(Command.RequiredPermissions)) {
-            return Interaction.reply({content: "Sorry, you don't have permission for that.", ephemeral: true})
+            return Interaction.reply({content: "Sorry, you don't have permission for that.", flags: MessageFlags.Ephemeral})
         }
     }
 

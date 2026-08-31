@@ -1,4 +1,4 @@
-const {PermissionsBitField, ButtonBuilder, ActionRowBuilder, ButtonStyle} = require("discord.js")
+const {PermissionsBitField, ButtonBuilder, ActionRowBuilder, ButtonStyle, MessageFlags} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
@@ -39,7 +39,7 @@ module.exports = {
             content: "",
             embeds: [EmbeddedMessage.embeds[0]],
             components: [ButtonActionRow],
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     }
 }

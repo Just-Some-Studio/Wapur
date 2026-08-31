@@ -48,6 +48,41 @@ async function RunEvent(PassedArguements) {
         DataHandler.setServerSettings(Interaction.guild.id, "miscBotData", JSON.stringify(NewmiscBotData))
     }
 
+
+    else if (Interaction.customId.includes("CategorySelection_")) {
+        const SelectedChannel = Interaction.values[0]
+
+        const TicketId = `${Interaction.guild.id}_Ticket_${Interaction.customId.replace("CategorySelection_", "")}`
+        const AllSavedTicketData = JSON.parse(DataHandler.getServer(Interaction.guild.id).ticketData)
+
+        let TicketDataIndex
+        AllSavedTicketData.forEach((ticketObject, index) => {
+            if (ticketObject.TicketId === TicketId) {
+                TicketDataIndex = index
+            }
+        })
+
+        AllSavedTicketData[TicketDataIndex].TicketCategory = SelectedChannel
+        DataHandler.setServerSettings(Interaction.guild.id, "ticketData", JSON.stringify(AllSavedTicketData))
+
+    } else if (Interaction.customId.includes("TranscribeChannelSelection_")) {
+        const SelectedChannel = Interaction.values[0]
+
+        const TicketId = `${Interaction.guild.id}_Ticket_${Interaction.customId.replace("TranscribeChannelSelection_", "")}`
+        const AllSavedTicketData = JSON.parse(DataHandler.getServer(Interaction.guild.id).ticketData)
+
+        let TicketDataIndex
+        AllSavedTicketData.forEach((ticketObject, index) => {
+            if (ticketObject.TicketId === TicketId) {
+                TicketDataIndex = index
+            }
+        })
+
+        AllSavedTicketData[TicketDataIndex].TranscribeChannel = SelectedChannel
+
+        DataHandler.setServerSettings(Interaction.guild.id, "ticketData", JSON.stringify(AllSavedTicketData))
+    }
+
     await Interaction.deferUpdate()
 }
 

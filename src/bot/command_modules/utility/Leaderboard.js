@@ -11,11 +11,11 @@ module.exports = {
 
     DevOnly: false,
 
-    RequiredPermissions: [PermissionsBitField.Flags.KickMembers, PermissionsBitField.Flags.ModerateMembers],
+    RequiredPermissions: [],
     SlashCommandOptions: [],
     
 
-    async execute(message, arguements, botClient) {
+    async execute(Interaction, PassedArguments, BotClient) {
         const LevelButton = new ButtonBuilder()
             .setStyle(ButtonStyle.Primary)
             .setLabel("Level")
@@ -36,23 +36,67 @@ module.exports = {
             .addComponents(EconomyButton)
             .addComponents(DailyStreakButton)
 
-        const LeaderboardData = dataHandler.customDataQuery(message.guild.id, "SELECT exp, userId FROM userdata ORDER BY exp DESC LIMIT 15", "all")
+        if (JSON.parse(DataHandler.getServer(Interaction.guild.id).economySettings)[0] === false && JSON.parse(DataHandler.getServer(Interaction.guild.id).levelSettings)[5] === false) {
+            const MessageEmbed = BotModules.embedMessage(
+                "Oh no! It looks like there are no leaderboards to display. Try activating economy or leveling first.", 
+                "03fca1", 
+                "Leaderboard disabled",
+                Date.now(),
+                `\"Hey, Listen\"`
+            )
 
-        const LeaderboardMessageBroken = LeaderboardData.map((userData, index) => {
-            return `${index + 1}\u200B. <@${userData.userId}>: level ${parseInt(BotModules.getLevelFromXp(userData.exp))}`
-        })
+            return Interaction.reply({
+                content: "",
+                components: [],
+                embeds: [MessageEmbed.embeds[0]]
+            })
+        }
 
-        const LeaderboardMessage = LeaderboardMessageBroken.length > 0 ? LeaderboardMessageBroken.join(`\n`) : "Oh no! It looks like nobody has gotten on the leaderboard. \nTalk in some channels to gain EXP"
+        if (JSON.parse(DataHandler.getServer(Interaction.guild.id).economySettings)[0] === false) {
+            EconomyButton.setDisabled(true)
+            DailyStreakButton.setDisabled(true)
+        }
 
-        const MessageEmbed = BotModules.embedMessage(LeaderboardMessage, "03fca1", "Level Leaderboard")
+        if (JSON.parse(DataHandler.getServer(Interaction.guild.id).levelSettings)[5] === false) {
+            LevelButton.setDisabled(true)
 
-        message.reply({
-            embeds: [MessageEmbed.embeds[0]],
-            components: [LeadboardOptionActionRow]
-        })
+            const MessageEmbed = BotModules.embedMessage(
+                "Looks like leveling is disabled, but you can still check economy!", 
+                "03fca1", 
+                "Level Leaderboard",
+                Date.now()
+            )
+
+            Interaction.reply({
+                embeds: [MessageEmbed.embeds[0]],
+                components: [LeadboardOptionActionRow]
+            })
+
+
+        } else {
+            const LeaderboardData = dataHandler.customDataQuery(Interaction.guild.id, "SELECT exp, userId FROM userdata ORDER BY exp DESC LIMIT 15", "all")
+
+            const LeaderboardMessageBroken = LeaderboardData.map((userData, index) => {
+                return `${index + 1}\u200B. <@${userData.userId}>: level ${parseInt(BotModules.getLevelFromXp(userData.exp))}`
+            })
+
+            const LeaderboardMessage = LeaderboardMessageBroken.length > 0 ? LeaderboardMessageBroken.join(`\n`) : "Oh no! It looks like nobody has gotten on the leaderboard. \nTalk in some channels to gain EXP"
+
+            const MessageEmbed = BotModules.embedMessage(
+                LeaderboardMessage, 
+                "03fca1", 
+                "Level Leaderboard",
+                Date.now()
+            )
+
+            Interaction.reply({
+                embeds: [MessageEmbed.embeds[0]],
+                components: [LeadboardOptionActionRow]
+            })
+        }
     },
 
-    async manageButtonInteraction(interaction, botClient) {
+    async manageButtonInteraction(interaction, BotClient) {
         const LevelButton = new ButtonBuilder()
             .setLabel("Level")
             .setCustomId("LevelLeaderboard")
@@ -64,6 +108,15 @@ module.exports = {
         const DailyStreakButton = new ButtonBuilder()
             .setLabel("Daily Streak")
             .setCustomId("DailyLeaderboard")
+
+        if (JSON.parse(DataHandler.getServer(interaction.guild.id).economySettings)[0] === false) {
+            EconomyButton.setDisabled(true)
+            DailyStreakButton.setDisabled(true)
+        }
+
+        if (JSON.parse(DataHandler.getServer(interaction.guild.id).levelSettings)[5] === false) {
+            LevelButton.setDisabled(true)
+        }
 
 
         var MessageEmbed = "" 
@@ -81,7 +134,12 @@ module.exports = {
 
             const LeaderboardMessage = LeaderboardMessageBroken.length > 0 ? LeaderboardMessageBroken.join(`\n`) : "Oh no! It looks like nobody has gotten on the leaderboard. \nTalk in some channels to gain EXP"
 
-            MessageEmbed = BotModules.embedMessage(LeaderboardMessage, "03fca1", "Daily Leaderboard")
+            MessageEmbed = BotModules.embedMessage(
+                LeaderboardMessage, 
+                "03fca1", 
+                "Daily Leaderboard",
+                Date.now()
+            )
 
             
         } else if (interaction.customId === "EconomyLeaderboard") {
@@ -98,7 +156,12 @@ module.exports = {
 
             const LeaderboardMessage = LeaderboardMessageBroken.length > 0 ? LeaderboardMessageBroken.join(`\n`) : "Oh no! It looks like nobody has gotten on the leaderboard. \nTalk in some channels to gain EXP"
 
-            MessageEmbed = BotModules.embedMessage(LeaderboardMessage, "03fca1", "Economy Leaderboard")
+            MessageEmbed = BotModules.embedMessage(
+                LeaderboardMessage, 
+                "03fca1", 
+                "Economy Leaderboard",
+                Date.now()
+            )
 
 
         } else if (interaction.customId === "LevelLeaderboard") {
@@ -114,7 +177,12 @@ module.exports = {
 
             const LeaderboardMessage = LeaderboardMessageBroken.length > 0 ? LeaderboardMessageBroken.join(`\n`) : "Oh no! It looks like nobody has gotten on the leaderboard. \nTalk in some channels to gain EXP"
 
-            MessageEmbed = BotModules.embedMessage(LeaderboardMessage, "03fca1", "Level Leaderboard")
+            MessageEmbed = BotModules.embedMessage(
+                LeaderboardMessage, 
+                "03fca1", 
+                "Level Leaderboard",
+                Date.now()
+            )
         }
 
 

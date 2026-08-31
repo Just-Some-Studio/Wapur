@@ -15,23 +15,23 @@ module.exports = {
         {"Name": "Reason", "Description": "The reason for the kick", "Required": false, "Type": "String", "Choices": []}
     ],
 
-    async execute(message, arguements, botClient) {
-        const KickedMember = message.mentions.members?.first() || message.guild.members.cache.get(arguements[0])        
+    async execute(Interaction, PassedArguments, BotClient) {
+        const KickedMember = Interaction.mentions.members?.first() || Interaction.guild.members.cache.get(PassedArguments[0])        
         if (!KickedMember) {
-            return message.reply({
+            return Interaction.reply({
                 content: "Invalid user selection provided",
                 allowedMentions: {repliedUser: false}
             })
         }
 
-        const Reason = arguements.slice(1).join(" ") || "No Reason Provided"
+        const Reason = PassedArguments.slice(1).join(" ") || "No Reason Provided"
 
         try {
             await KickedMember.kick(Reason)
-            await message.channel.send(`Kicked ${KickedMember} for ${Reason}`)
+            await Interaction.channel.send(`Kicked ${KickedMember} for ${Reason}`)
         } catch (ThrownError) {
             console.error(ThrownError)
-            await message.channel.send(`${ThrownError}`)
+            await Interaction.channel.send(`${ThrownError}`)
         }
     }
 }

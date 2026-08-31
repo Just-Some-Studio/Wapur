@@ -16,6 +16,26 @@ async function RunEvent(PassedArguements) {
         DataHandler.setServerSettings(Interaction.guild.id, "miscBotData", JSON.stringify(NewmiscBotData))
     }
 
+
+
+    else if (Interaction.customId.includes("ModeratorRoleSelection_")) {
+        const SelectedRoles = Interaction.values
+
+        const TicketId = `${Interaction.guild.id}_Ticket_${Interaction.customId.replace("ModeratorRoleSelection_", "")}`
+        const AllSavedTicketData = JSON.parse(DataHandler.getServer(Interaction.guild.id).ticketData)
+
+        let TicketDataIndex
+        AllSavedTicketData.forEach((ticketObject, index) => {
+            if (ticketObject.TicketId === TicketId) {
+                TicketDataIndex = index
+            }
+        })
+
+        AllSavedTicketData[TicketDataIndex].ModeratorRoles = SelectedRoles
+
+        DataHandler.setServerSettings(Interaction.guild.id, "ticketData", JSON.stringify(AllSavedTicketData))
+    }
+
     await Interaction.deferUpdate()
 }
 

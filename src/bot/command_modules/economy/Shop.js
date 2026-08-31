@@ -1,4 +1,4 @@
-const {PermissionsBitField, StringSelectMenuBuilder, ActionRowBuilder, EmbedBuilder} = require("discord.js")
+const {PermissionsBitField, StringSelectMenuBuilder, ActionRowBuilder, EmbedBuilder, MessageFlags} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
@@ -27,118 +27,132 @@ module.exports = {
     RequiredPermissions: [],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
-        const userId = message.author?.id || message.user?.id
-        const guildId = message.guild?.id
+    async execute(Interaction, PassedArguments, BotClient) {
+        const UserId = Interaction.author?.id || Interaction.user?.id
+        const UserData = DataHandler.getUser(Interaction.guild.id, UserId)
 
-        function buildShopResponse(userCredits, userId) {
-            const SelectMenu = new StringSelectMenuBuilder()
-                .setCustomId(`shop_select_${userId}`)
-                .setPlaceholder("Choose an item to buy")
+        if (!Interaction.guild) {
+            return Interaction.reply(BotModules.embedMessage("This command cannot be used in direct messages", "ef4444"))
+        }
 
-            ShopItems.forEach(item => {
-                SelectMenu.addOptions({
-                    label: `${item.Emoji} ${item.Name}`,
-                    description: `${item.Description} • ${item.Price} credits`,
-                    value: item.Value
-                })
+        let PurchasableItems = 0
+
+        const SelectMenu = new StringSelectMenuBuilder()
+            .setCustomId(`ShopSelectionMenu_${UserId}`)
+            .setPlaceholder("Choose an item to purchase")
+
+        ShopItems.forEach(item => {
+            SelectMenu.addOptions({
+                label: `${item.Emoji} ${item.Name}`,
+                description: `${item.Description} • ${item.Price} credits`,
+                value: item.Value
             })
 
-            const Row = new ActionRowBuilder()
-                .addComponents(SelectMenu)
-                
-            const Embed = BotModules.embedMessage("Use the dropdown below to select an item to purchase! \nYou can purchase the same item multiple times but they do not stack. \n\nNOTE: You can buy more than one item at a time.", "2f6fed", "Item Shop", null, null, [{ name: "Your balance", value: `${userCredits} credits`, inline: true }, { name: "Available items", value: `${ShopItems.length} purchasable options`, inline: true }])
-
-            return {
-                embeds: [Embed.embeds[0]],
-                components: [Row]
+            if (item.Price <= UserData.credits) {
+                PurchasableItems++
             }
-        }
+        })
 
-        if (!message.guild) {
-            return message.reply(BotModules.embedMessage("Please use this shop in a server", "ef4444"))
-        }
+        const ShopActionRow = new ActionRowBuilder()
+            .addComponents(SelectMenu)
+            
+        const MessageEmbed = BotModules.embedMessage(
+            "Use the dropdown below to select an item to purchase! \nYou can purchase the same item more than once.", 
+            "2f6fed", 
+            "Item Shop",
+            Date.now(), 
+            "The shop expired 5 minutes after it is created", 
+            [
+                {name: "Your balance", value: `${UserData.credits} credits`, inline: true}, 
+                {name: "Available items", value: `${PurchasableItems} purchasable options`, inline: true}
+            ]
+        )
 
-        const userData = DataHandler.getUser(guildId, userId)
-
-        return message.reply(buildShopResponse(userData.credits, userId))
+        return Interaction.reply({
+            content: "",
+            embeds: [MessageEmbed.embeds[0]],
+            components: [ShopActionRow]
+        })
     },
 
-    async handleSelectMenu(interaction, botClient) {
-        if (!interaction.isStringSelectMenu() || !interaction.customId.startsWith("shop_select_")) {
-            return
-        }
 
-        if (Date.now() - interaction.createdTimestamp < 1000 * 60 * 5) {
-            return interaction.reply({content: "This interaction is too old and can no longer be used", ephemeral: true})
-        }
+    async handleSelectMenu(Interaction, BotClient) {
+        const UserId = Interaction.customId.replace("ShopSelectionMenu_", "")
+        const OldUserData = DataHandler.getUser(Interaction.guild.id, UserId)
 
-        // Extract the original user ID from the custom ID
-        const originalUserId = interaction.customId.replace("shop_select_", "")
-        
-        // Check if the person clicking is the original user
-        if (interaction.user.id !== originalUserId) {
-            return interaction.reply({content: "This isn't your shop command, use the command to purchase an item", ephemeral: true})
-        }
-
-        const selectedValue = interaction.values[0]
+        const selectedValue = Interaction.values[0]
         const selectedItem = ShopItems.find(item => item.Value === selectedValue)
 
-        if (!selectedItem) {
-            return interaction.reply({ content: "That item is no longer available.", ephemeral: true })
+        if (Date.now() - Interaction.createdTimestamp > 1000 * 60 * 5) {
+            return await Interaction.reply({
+                content: "This interaction is too old and can no longer be used", 
+                flags: MessageFlags.Ephemeral
+            })
         }
-
-        const UserId = interaction.user.id
-        const GuildId = interaction.guild?.id
-
-        if (!GuildId) {
-            return interaction.reply({ content: "This shop only works in a server.", ephemeral: true })
-        }
-
-        const userData = DataHandler.getUser(GuildId, UserId)
-
-        if (userData.credits < selectedItem.Price) {
-            const MissingCredits = selectedItem.Price - userData.credits
-            const embed = new EmbedBuilder()
-                .setColor("ef4444")
-                .setTitle("Not enough credits")
-                .setDescription(`You need **${MissingCredits}** more credits to buy **${selectedItem.Name}**.`)
-
-            return interaction.reply({ embeds: [embed], ephemeral: true })
-        }
-
-
-
-        // Purchasing the item and updating data
-        let OldData = JSON.parse(DataHandler.getUser(interaction.guild.id, UserId).purchasedItems || "[]")
         
-        if (OldData === "[]") {
-            OldData = `[{ItemName: ${selectedItem.Name}, ItemValue: ${selectedItem.Value}, Amount: 1, PurchaseDate: ${Date.now()}}]`
-        } else if (OldData.some(item => item.ItemValue === selectedItem.Value)) {
-            OldData[OldData.findIndex(item => item.ItemValue === selectedItem.Value)].Amount += 1
-        } else {
-            OldData.push({"ItemName": selectedItem.Name, "ItemValue": selectedItem.Value, "Amount": 1, "PurchaseDate": Date.now()})
+        if (Interaction.user.id !== UserId) {
+            return await Interaction.reply({
+                content: "This isn't your shop command, use the command to purchase an item", 
+                flags: MessageFlags.Ephemeral
+            })
         }
 
-        const PurchaseSuccessful = DataHandler.purchaseItem(GuildId, UserId, selectedItem.Price, JSON.stringify(OldData))
-
-        if (!PurchaseSuccessful) {
-            const embed = new EmbedBuilder()
-                .setColor("ef4444")
-                .setTitle("Purchase failed")
-                .setDescription("Your purchase could not be completed right now.")
-
-            return interaction.reply({ embeds: [embed], ephemeral: true })
+        if (!selectedItem) {
+            return await Interaction.reply({
+                content: "That item is no longer available.",
+                flags: MessageFlags.Ephemeral
+            })
         }
 
-        // Sending a reply
-        const UpdatedUser = DataHandler.getUser(GuildId, UserId)
-        const embed = new EmbedBuilder()
-            .setColor("22c55e")
-            .setTitle("Purchase complete")
-            .setDescription(`You bought **${selectedItem.Name}** for **${selectedItem.Price}** credits.`)
-            .addFields({ name: "Remaining balance", value: `${UpdatedUser.credits} credits`, inline: true })
+        if (OldUserData.credits < selectedItem.Price) {
+            const MissingCredits = selectedItem.Price - OldUserData.credits
 
-        return interaction.reply({ embeds: [embed], ephemeral: true })
+            const MessageEmbed = BotModules.embedMessage(
+                `You need **${MissingCredits}** more credits to buy **${selectedItem.Name}**.`,
+                "ef4444",
+                "Insufficient funds",
+                Date.now()
+            )
+
+            return await Interaction.reply({
+                content: "",
+                embeds: [MessageEmbed.embeds[0]], 
+                flags: MessageFlags.Ephemeral
+            })
+        }
+
+
+
+        // // Purchasing the item and updating data
+        // let OldData = JSON.parse(DataHandler.getUser(Interaction.guild.id, UserId).purchasedItems || "[]")
+        
+        // if (OldData === "[]") {
+        //     OldData = `[{ItemName: ${selectedItem.Name}, ItemValue: ${selectedItem.Value}, Amount: 1, PurchaseDate: ${Date.now()}}]`
+        // } else if (OldData.some(item => item.ItemValue === selectedItem.Value)) {
+        //     OldData[OldData.findIndex(item => item.ItemValue === selectedItem.Value)].Amount += 1
+        // } else {
+        //     OldData.push({"ItemName": selectedItem.Name, "ItemValue": selectedItem.Value, "Amount": 1, "PurchaseDate": Date.now()})
+        // }
+
+        // const PurchaseSuccessful = DataHandler.purchaseItem(GuildId, UserId, selectedItem.Price, JSON.stringify(OldData))
+
+        // if (!PurchaseSuccessful) {
+        //     const embed = new EmbedBuilder()
+        //         .setColor("ef4444")
+        //         .setTitle("Purchase failed")
+        //         .setDescription("Your purchase could not be completed right now.")
+
+        //     return Interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral })
+        // }
+
+        // // Sending a reply
+        // const UpdatedUser = DataHandler.getUser(GuildId, UserId)
+        // const embed = new EmbedBuilder()
+        //     .setColor("22c55e")
+        //     .setTitle("Purchase complete")
+        //     .setDescription(`You bought **${selectedItem.Name}** for **${selectedItem.Price}** credits.`)
+        //     .addFields({ name: "Remaining balance", value: `${UpdatedUser.credits} credits`, inline: true })
+
+        // return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral })
     }
 }

@@ -12,8 +12,8 @@ module.exports = {
     RequiredPermissions: [],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
-        const UserData = DataHandler.getUser(message.guild.id, message.author?.id || message.user?.id)
+    async execute(Interaction, PassedArguments, BotClient) {
+        const UserData = DataHandler.getUser(Interaction.guild.id, Interaction.author?.id || Interaction.user?.id)
 
         const CurrentLevel = BotModules.getLevelFromXp(UserData.exp)
         const NextLevel = CurrentLevel + 1
@@ -23,6 +23,6 @@ module.exports = {
 
         const ExpForNextLevelCalculated = ExpForNext - UserData.exp
 
-        message.reply(`Your current level is ${CurrentLevel}, you need ${ExpForNextLevelCalculated} more exp to level up!`)
+        Interaction.reply(`Your current level is ${CurrentLevel}, you need ${ExpForNextLevelCalculated} more exp to level up!`)
     }
 }

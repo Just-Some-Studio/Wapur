@@ -23,7 +23,7 @@ module.exports = {
     ],
 
 
-    // Interaction is the interaction, arguements are obvious..., BotClient is the bot itself
-    async execute(Interaction, PassedArguements, BotClient) {
+    // Interaction is the interaction, PassedArguments are obvious..., BotClient is the bot itself
+    async execute(Interaction, PassedArguments, BotClient) {
     }
 }

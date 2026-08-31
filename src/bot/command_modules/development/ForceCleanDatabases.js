@@ -12,7 +12,7 @@ module.exports = {
     RequiredPermissions: [PermissionsBitField.Flags.ViewAuditLog],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
+    async execute(Interaction, PassedArguments, BotClient) {
         console.log("[CRON] Running forced cleanup task...")
     
         const today = new Date().toISOString().split('T')[0]
@@ -35,7 +35,7 @@ module.exports = {
     
         console.log(`[CRON] Forced cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`)
 
-        message.reply({
+        Interaction.reply({
             content: `[CRON] Forced cleanup task completed. Deleted ${DeletedDatabasesCount} server databases.`,
             emphemeral: true
         })

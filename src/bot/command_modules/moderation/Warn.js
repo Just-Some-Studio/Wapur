@@ -15,24 +15,24 @@ module.exports = {
         {"Name": "Reason", "Description": "The reason for the warning", "Required": false, "Type": "String", "Choices": []}
     ],
 
-    async execute(message, arguements, botClient) {
-        const SelectedUser = message.mentions.members?.first() || await botClient.users?.fetch(arguements[0])
-        const Reason = arguements.slice(1).join(" ") || "No Reason Provided"
+    async execute(Interaction, PassedArguments, BotClient) {
+        const SelectedUser = Interaction.mentions.members?.first() || await BotClient.users?.fetch(PassedArguments[0])
+        const Reason = PassedArguments.slice(1).join(" ") || "No Reason Provided"
 
         if (!SelectedUser || !Reason) {
-            return message.reply({
-                content: "Invalid command arguements provided",
+            return Interaction.reply({
+                content: "Invalid command PassedArguments provided",
                 allowedMentions: {repliedUser: false}
             })
         }
 
-        const OldData = JSON.parse(DataHandler.getUser(message.guild.id, SelectedUser).warnings)
-        OldData.push({"reason": Reason, "admin": message.author.id, "time": Date.now()})
+        const OldData = JSON.parse(DataHandler.getUser(Interaction.guild.id, SelectedUser).warnings)
+        OldData.push({"reason": Reason, "admin": Interaction.author.id, "time": Date.now()})
         const NewJson = JSON.stringify(OldData)
 
-        DataHandler.addWarning(message.guild.id, SelectedUser, NewJson)
+        DataHandler.addWarning(Interaction.guild.id, SelectedUser, NewJson)
 
-        await message.channel.send(`Successfully warned ${SelectedUser} for ${Reason}`)
+        await Interaction.channel.send(`Successfully warned ${SelectedUser} for ${Reason}`)
         await SelectedUser.send(`You have been warned for ${Reason}`)
     }
 }

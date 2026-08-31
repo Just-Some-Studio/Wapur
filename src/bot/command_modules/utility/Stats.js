@@ -12,7 +12,7 @@ module.exports = {
     RequiredPermissions: [PermissionsBitField.Flags.ManageGuild],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
+    async execute(Interaction, PassedArguments, BotClient) {
 
         const MessageEmbed = BotModules.embedMessage(
             `The bot is currently unsharded, We will show you your shard when you get added to one! \n\nBot Owner: pie_master1`, 
@@ -21,12 +21,12 @@ module.exports = {
             null,
             null, 
             [
-                {name: "Total Servers", value: `${botClient.guilds.cache.size}`, inline: true}, 
-                {name: "Total Users", value: `${botClient.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)}`, inline: true}
+                {name: "Total Servers", value: `${BotClient.guilds.cache.size}`, inline: true}, 
+                {name: "Total Users", value: `${BotClient.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)}`, inline: true}
             ]
         )
 
-        message.reply({
+        Interaction.reply({
             content: "",
             embeds: [MessageEmbed.embeds[0]]
         })

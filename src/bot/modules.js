@@ -74,7 +74,7 @@ module.exports = {
 
 
 
-    checkIfUserOwnsItem(message, ItemName, UserId) {
+    checkIfUserOwnsItem(Interaction, ItemName, UserId) {
     },
 
 

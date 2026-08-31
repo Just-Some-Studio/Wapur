@@ -12,10 +12,10 @@ module.exports = {
     RequiredPermissions: [],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
-        const userId = message.author?.id || message.user?.id
-        const User = await botClient.users?.fetch(userId)
-        const UserData = DataHandler.getUser(message.guild.id, userId)
+    async execute(Interaction, PassedArguments, BotClient) {
+        const userId = Interaction.author?.id || Interaction.user?.id
+        const User = await BotClient.users?.fetch(userId)
+        const UserData = DataHandler.getUser(Interaction.guild.id, userId)
 
         const BalanceButton = new ButtonBuilder()
             .setCustomId("Credits")
@@ -49,7 +49,7 @@ module.exports = {
 
         const Embed = BotModules.embedMessage(`You currently have **${UserData.credits}** credits \n\nInventory coming soon!`, "03c2fc", `${User.globalName}'s profile`)
 
-        return message.reply({
+        return Interaction.reply({
             embeds: [Embed.embeds[0]],
             components: [ActionRow]
         })

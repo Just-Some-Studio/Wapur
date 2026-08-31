@@ -1,4 +1,4 @@
-const {PermissionsBitField} = require("discord.js")
+const {PermissionsBitField, MessageFlags} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
@@ -14,9 +14,9 @@ module.exports = {
         {"Name": "Code", "Description": "Input a code to redeem", "Required": true, "Type": "String", "Choices": []},
     ],
 
-    async execute(message, arguements, botClient) {
-        const userId = message.author?.id || message.user?.id
-        const RedeemedCode = arguements.slice(0).join(" ") || "No Reason Provided"
+    async execute(Interaction, PassedArguments, BotClient) {
+        const userId = Interaction.author?.id || Interaction.user?.id
+        const RedeemedCode = PassedArguments.slice(0).join(" ") || "No Reason Provided"
 
         Codes.forEach(CodeObject => {
             if (CodeObject.Value == RedeemedCode) {
@@ -24,9 +24,9 @@ module.exports = {
                     const CreditAmount = Math.floor(parseInt(CodeObject.Reward.replace("credits_", "")))
                     const NewMessage = CodeObject.Response.replace("/$", `${CreditAmount} credits`)
 
-                    DataHandler.addWorkCredits(message.guild?.id, userId, CreditAmount, "AddCredits")
+                    DataHandler.addWorkCredits(Interaction.guild?.id, userId, CreditAmount, "AddCredits")
 
-                    message.reply({content: NewMessage, ephemeral: true})
+                    Interaction.reply({content: NewMessage, flags: MessageFlags.Ephemeral})
                 }
             }
         })

@@ -12,13 +12,13 @@ module.exports = {
     RequiredPermissions: [],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
-        const userId = message.author?.id || message.user?.id
+    async execute(Interaction, PassedArguments, BotClient) {
+        const userId = Interaction.author?.id || Interaction.user?.id
         
         const CurrentTime = Date.now()
         const CooldownTime = 24 * 60 * 60 * 1000
 
-        const UserData = DataHandler.getUser(message.guild.id, userId)
+        const UserData = DataHandler.getUser(Interaction.guild.id, userId)
 
         if (CurrentTime - UserData.lastDaily < CooldownTime) {
             const CooldownTimeLeft = CooldownTime - (CurrentTime - UserData.lastDaily)
@@ -26,20 +26,20 @@ module.exports = {
 
             if (MinutesLeft > 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (60 * 60 * 1000))
-                return message.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more hours.`, 'c9c175'))
+                return Interaction.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more hours.`, 'c9c175'))
             } else if (CooldownTimeLeft / (1000) <= 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (1000))
-                return message.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more seconds.`, 'c9c175'))
+                return Interaction.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more seconds.`, 'c9c175'))
             } else {
-                return message.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more minutes.`, 'c9c175'))
+                return Interaction.reply(BotModules.embedMessage(`You cannot claim your daily reward for another **${MinutesLeft}** more minutes.`, 'c9c175'))
             }
 
 
         } else if (CurrentTime - UserData.lastDaily > (2 * CooldownTime)) {
             const CreditsEarned = Math.floor(Math.random() * 50) + 1
-            DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "DailyLost", CurrentTime)
+            DataHandler.addWorkCredits(Interaction.guild.id, userId, CreditsEarned, "DailyLost", CurrentTime)
 
-            const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
+            const UpdatedUser = DataHandler.getUser(Interaction.guild.id, userId)
             const MessageEmbed = BotModules.embedMessage(
                 `You claimed your daily bonus of **${CreditsEarned}** credits! \n\nYou forgot to claim your bonus yesterday and your reset to **${UpdatedUser.dailyStreak}**, Come back in a day for another bonus.`,
                 "6283b5",
@@ -48,7 +48,7 @@ module.exports = {
                 `Your current balance is: ${UpdatedUser.credits}`
             )
 
-            await message.reply({
+            await Interaction.reply({
                 content: "",
                 embeds: [MessageEmbed.embeds[0]]
             })
@@ -56,9 +56,9 @@ module.exports = {
 
         } else {
             const CreditsEarned = Math.floor(Math.random() * (50 * (1 + (0.1 * parseInt(UserData.dailyStreak))))) + 1
-            DataHandler.addWorkCredits(message.guild.id, userId, CreditsEarned, "DailyKept", CurrentTime)
+            DataHandler.addWorkCredits(Interaction.guild.id, userId, CreditsEarned, "DailyKept", CurrentTime)
 
-            const UpdatedUser = DataHandler.getUser(message.guild.id, userId)
+            const UpdatedUser = DataHandler.getUser(Interaction.guild.id, userId)
 
             const MessageEmbed = BotModules.embedMessage(
                 `You claimed your daily bonus of **${CreditsEarned}** credits! \n\nYour current streak is **${UpdatedUser.dailyStreak}**, Come back in a day for another bonus.`,
@@ -68,7 +68,7 @@ module.exports = {
                 `Your current balance is: ${UpdatedUser.credits}`
             )
 
-            await message.reply({
+            await Interaction.reply({
                 content: "",
                 embeds: [MessageEmbed.embeds[0]]
             })

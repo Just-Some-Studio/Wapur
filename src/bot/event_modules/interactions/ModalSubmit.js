@@ -75,6 +75,58 @@ async function RunEvent(PassedArguements) {
 
         await Interaction.deferUpdate()
     }
+
+
+
+
+
+
+    else if (Interaction.customId.includes("TicketChannelModal_")) {
+        const TicketId = `${Interaction.guild.id}_Ticket_${Interaction.customId.replace("TicketChannelModal_", "")}`
+        const AllSavedTicketData = JSON.parse(DataHandler.getServer(Interaction.guild.id).ticketData)
+
+        const ChannelMessage = Interaction.fields.getTextInputValue("ChannelMessage") || "Thank you for opening a new ticket \n\nThe moderation team will be with you shortly \nPlease state your issue so we can help you quicker"
+
+        let TicketDataIndex
+        AllSavedTicketData.forEach((ticketObject, index) => {
+            if (ticketObject.TicketId === TicketId) {
+                TicketDataIndex = index
+            }
+        })
+
+        AllSavedTicketData[TicketDataIndex].ChannelMessage = ChannelMessage
+
+        DataHandler.setServerSettings(Interaction.guild.id, "ticketData", JSON.stringify(AllSavedTicketData))
+
+        await Interaction.deferUpdate()
+
+    } else if (Interaction.customId.includes("NewTicketModal_")) {
+        const TicketId = `${Interaction.guild.id}_Ticket_${Interaction.customId.replace("NewTicketModal_", "")}`
+        const AllSavedTicketData = JSON.parse(DataHandler.getServer(Interaction.guild.id).ticketData)
+
+        const TicketName = Interaction.fields.getTextInputValue("TicketName") || "Ticket"
+        const TicketMessage = Interaction.fields.getTextInputValue("TicketMessage") || "Click below to open a ticket"
+        const TicketFooter = Interaction.fields.getTextInputValue("TicketFooter") || "Tickets may take time to be reviewed"
+        const ButtonName = Interaction.fields.getTextInputValue("ButtonName") || "Open Ticket"
+
+
+        let TicketDataIndex
+        AllSavedTicketData.forEach((ticketObject, index) => {
+            if (ticketObject.TicketId === TicketId) {
+                TicketDataIndex = index
+            }
+        })
+
+        AllSavedTicketData[TicketDataIndex].TicketName = TicketName
+        AllSavedTicketData[TicketDataIndex].TicketMessage = TicketMessage
+        AllSavedTicketData[TicketDataIndex].TicketFooter = TicketFooter
+        AllSavedTicketData[TicketDataIndex].ButtonName = ButtonName
+        
+
+        DataHandler.setServerSettings(Interaction.guild.id, "ticketData", JSON.stringify(AllSavedTicketData))
+
+        await Interaction.deferUpdate()
+    }
 }
 
 module.exports = {RunEvent}

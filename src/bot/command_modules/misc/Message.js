@@ -1,6 +1,5 @@
 const {PermissionsBitField, ModalBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder,
-    TextInputBuilder, TextInputStyle
-} = require("discord.js")
+    TextInputBuilder, TextInputStyle, MessageFlags} = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 
@@ -17,23 +16,23 @@ module.exports = {
         {"Name": "Message", "Description": "The message to send", "Required": false, "Type": "String", "Choices": []}
     ],
 
-    async execute(message, arguements, botClient) {
-        const SelectedUser = message.options?.getUser('user') || message.mentions?.members?.first() || await botClient.users?.fetch(arguements[0])
-        const Message = arguements.slice(1).join(" ") || " "
+    async execute(Interaction, PassedArguments, BotClient) {
+        const SelectedUser = Interaction.options?.getUser('user') || Interaction.mentions?.members?.first() || await BotClient.users?.fetch(PassedArguments[0])
+        const Message = PassedArguments.slice(1).join(" ") || " "
 
         if (!SelectedUser || !Message) {
-            return message.reply({
-                content: "Invalid command arguements provided",
+            return Interaction.reply({
+                content: "Invalid command PassedArguments provided",
                 allowedMentions: {repliedUser: false}
             })
         }
 
         try {
-            const SentMessage = BotModules.embedMessage(Message, null, "Moderator sent you a message", Date.now(), `This was sent to you from: ${message.guild}`)
+            const SentMessage = BotModules.embedMessage(Message, null, "Moderator sent you a Interaction", Date.now(), `This was sent to you from: ${Interaction.guild}`)
 
             const ReplyButton = new ButtonBuilder()
                 .setStyle(ButtonStyle.Primary)
-                .setCustomId(`DMReplyButton_${message.guild.id}`)
+                .setCustomId(`DMReplyButton_${Interaction.guild.id}`)
                 .setLabel("Reply to user")
 
             const ReplyActionRow = new ActionRowBuilder()
@@ -45,12 +44,12 @@ module.exports = {
                 components: [ReplyActionRow]
             })
 
-            console.log(`Message sent from ${message.user.username}(${message.user.id}): ${SentMessage.embeds[0].data.description}
-                --> Sent to user ${SelectedUser.username}(${SelectedUser.id}), in server ${message.guild.name}(${message.guild.id})`)
+            console.log(`Message sent from ${Interaction.user.username}(${Interaction.user.id}): ${SentMessage.embeds[0].data.description}
+                --> Sent to user ${SelectedUser.username}(${SelectedUser.id}), in server ${Interaction.guild.name}(${Interaction.guild.id})`)
 
-            message.reply({
+            Interaction.reply({
                 content: "Message was sent to user successfully",
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             })
             
         } catch (ThrownError) {
@@ -58,7 +57,7 @@ module.exports = {
         }
     },
 
-    async generateResponseModal(interaction, botClient) {
+    async generateResponseModal(interaction, BotClient) {
         const ResponseModal = new ModalBuilder()
             .setCustomId(`DMResponseSubmit_${interaction.customId.replace("DMReplyButton_", "")}`)
             .setTitle("DM Reponse Submit")

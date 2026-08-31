@@ -7,11 +7,17 @@ async function RunEvent(PassedArguements) {
     const Interaction = PassedArguements.Interaction
 
     const ConfigureCommand = BotClient.commands.get("configure")
-    const RockPaperScissorsCommand = BotClient.commands.get("rps")
+
     const LeaderboardCommand = BotClient.commands.get("leaderboard")
     const MessageCommand = BotClient.commands.get("message")
+
+    const RockPaperScissorsCommand = BotClient.commands.get("rps")
     const CoinFlipCommand = BotClient.commands.get("coinflip")
     const RouletteCommand = BotClient.commands.get("roulette")
+
+    const TicketSettingsCommand = BotClient.commands.get("ticketsettings")
+    const OpenTicketCommand = BotClient.commands.get("openticket")
+    const CloseTicketCommand = BotClient.commands.get("closeticket")
 
     if (Interaction.customId ===  "Reset" || Interaction.customId ===  "PrefixModalBuild") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
@@ -25,7 +31,7 @@ async function RunEvent(PassedArguements) {
         ConfigureCommand.createConfigureMessage(Interaction, BotClient)
     }
     
-    
+
     
     else if (Interaction.customId === "ConfigLevelingButton") {
         ConfigureCommand.createLevelingMessage(Interaction, BotClient)
@@ -39,11 +45,15 @@ async function RunEvent(PassedArguements) {
         ConfigureCommand.createMiscMessage(Interaction, BotClient)
     }
 
+
+
     else if (Interaction.customId === "ToggleLeveling") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
     } else if (Interaction.customId === "LevelingModalCreate") {
         ConfigureCommand.handleConfigure(Interaction, BotClient)
     }
+
+
 
     else if (Interaction.customId.includes("rps-Rock") || Interaction.customId.includes("rps-Scissors") || Interaction.customId.includes("rps-Paper")) {
         RockPaperScissorsCommand.endGame(Interaction, BotClient)
@@ -55,9 +65,43 @@ async function RunEvent(PassedArguements) {
         RouletteCommand.endGame(Interaction, BotClient)
     }
 
+
+
+    else if (Interaction.customId.includes("BeginTicketBuildButton_")) {
+        TicketSettingsCommand.newTicketSettings(Interaction, BotClient)
+    } else if (Interaction.customId.includes("TicketModalBuild_")) {
+        TicketSettingsCommand.newTicketModalEditor(Interaction, BotClient)
+    } else if (Interaction.customId.includes("TicketMessageModalBuild_")) {
+        TicketSettingsCommand.newTicketMessageModalEditor(Interaction, BotClient)
+    } else if (Interaction.customId.includes("SaveNewTicket_")) {
+        TicketSettingsCommand.saveNewTicket(Interaction, BotClient)
+    } else if (Interaction.customId.includes("SubmitNewTicket_")) {
+        TicketSettingsCommand.createTicketInteraction(Interaction, BotClient)
+    } else if (Interaction.customId.includes("OpenTicket_")) {
+        OpenTicketCommand.createTicketViaButton(Interaction, BotClient)
+    } else if (Interaction.customId.includes("CloseTicket_")) {
+        CloseTicketCommand.closeTicketViaButton(Interaction, BotClient)
+    } else if (Interaction.customId.includes("ReopenTicket_")) {
+        CloseTicketCommand.reopenTicket(Interaction, BotClient)
+    } else if (Interaction.customId.includes("DeleteTicket_")) {
+        CloseTicketCommand.deleteTicket(Interaction, BotClient)
+    } else if (Interaction.customId.includes("TranscribeTicket_")) {
+        CloseTicketCommand.transcribeTicket(Interaction, BotClient)
+    } else if (Interaction.customId.includes("EditTicketsButton")) {
+        TicketSettingsCommand.ticketsEditorMainMenu(Interaction, BotClient)
+    } else if (Interaction.customId === "TicketMenuReturn") {
+        TicketSettingsCommand.execute(Interaction, null, BotClient)
+    } else if (Interaction.customId.includes("EditTicketData_")) {
+        TicketSettingsCommand.newTicketSettings(Interaction, BotClient)
+    }
+
+
+
     else if (Interaction.customId === "LevelLeaderboard" || Interaction.customId === "EconomyLeaderboard" || Interaction.customId === "DailyLeaderboard") {
         LeaderboardCommand.manageButtonInteraction(Interaction, BotClient)
     }
+
+
 
     else if (Interaction.customId.includes("DMReplyButton")) {
         MessageCommand.generateResponseModal(Interaction, BotClient)

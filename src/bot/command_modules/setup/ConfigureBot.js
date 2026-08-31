@@ -1,6 +1,6 @@
 const {PermissionsBitField, ButtonBuilder, ButtonInteraction, ActionRowBuilder, ButtonStyle, StringSelectMenuBuilder,
     RoleSelectMenuBuilder, ChannelSelectMenuBuilder, UserSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle,
-    messageLink
+    MessageFlags
 } = require("discord.js")
 const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
@@ -12,7 +12,7 @@ module.exports = {
 
     DevOnly: false,
 
-    RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers],
+    RequiredPermissions: [PermissionsBitField.Flags.ManageGuild],
     SlashCommandOptions: [],
 
     async execute(Interaction, PassedArguements, BotClient) {
@@ -73,19 +73,19 @@ module.exports = {
                 content: ReplyContent,
                 embeds: [],
                 components: [ConfigurationActionRow, HelpActionRow],
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             })
         } else {
             await Interaction.reply({
                 content: ReplyContent,
                 components: [ConfigurationActionRow, HelpActionRow],
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             })
         }
     },
 
 
-    async handleConfigure(interaction, botClient) {
+    async handleConfigure(interaction, BotClient) {
         if (interaction.customId === "PrefixModalBuild") {
             const SetupModal = new ModalBuilder()
                 .setCustomId("SetupModal")
@@ -115,7 +115,7 @@ module.exports = {
             NewLevelSettings[5] = !OldLevelSettings[5]
 
             DataHandler.setServerSettings(interaction.guild.id, "levelSettings", JSON.stringify(NewLevelSettings))
-            this.createLevelingMessage(interaction, botClient)
+            this.createLevelingMessage(interaction, BotClient)
         }
 
         else if (interaction.customId === "ToggleEconomy") {
@@ -125,7 +125,7 @@ module.exports = {
             NewEconomySettings[0] = !OldEconomySettings[0]
 
             DataHandler.setServerSettings(interaction.guild.id, "economySettings", JSON.stringify(NewEconomySettings))
-            this.createEconomyMessage(interaction, botClient)
+            this.createEconomyMessage(interaction, BotClient)
         }
 
 
@@ -180,7 +180,7 @@ module.exports = {
 
 
 
-    async createSetupMessage(interaction, botClient) {
+    async createSetupMessage(interaction, BotClient) {
         const EditAccessRoles = interaction.guild.roles.cache.filter(Role => 
             (Role.permissions.has(PermissionsBitField.Flags.Administrator) || 
             Role.permissions.has(PermissionsBitField.Flags.ManageGuild)) &&
@@ -231,7 +231,7 @@ module.exports = {
         await interaction.update({
             embeds: [Embed.embeds[0]],
             components: [EditAccessActionRow, PrefixActionRow],
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     },
 
@@ -240,7 +240,7 @@ module.exports = {
 
 
 
-    async createConfigureMessage(interaction, botClient) {
+    async createConfigureMessage(interaction, BotClient) {
         const Embed = BotModules.embedMessage(
             'You can configure the bot\'s settings here! \n\nBelow are the categories of settings you can change \nClick on the buttons to view and change the settings for each category \n\nClick "Return" to go back to the main configuration page',
             "fff07a",
@@ -291,13 +291,13 @@ module.exports = {
         await interaction.update({
             embeds: [Embed.embeds[0]],
             components: [ReturnButtonActionRow, SettingButtonActionRow],
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     },
 
 
     
-    async createLevelingMessage(interaction, botClient) {
+    async createLevelingMessage(interaction, BotClient) {
         const ReturnButton = new ButtonBuilder()
             .setCustomId("ConfigSemiReturnButton")
             .setLabel("Return")
@@ -353,11 +353,11 @@ module.exports = {
         await interaction.update({
             embeds: [Embed.embeds[0]],
             components: [ReturnButtonActionRow, LevelMessageChannelActionRow, EXPDeniedChannelsActionRow],
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     },
 
-    async createEconomyMessage(interaction, botClient) {
+    async createEconomyMessage(interaction, BotClient) {
         const ReturnButton = new ButtonBuilder()
             .setCustomId("ConfigSemiReturnButton")
             .setLabel("Return")
@@ -388,11 +388,11 @@ module.exports = {
         await interaction.update({
             embeds: [Embed.embeds[0]],
             components: [ButtonActionRow],
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     },
     
-    async createModerationMessage(interaction, botClient) {
+    async createModerationMessage(interaction, BotClient) {
         const ReturnButton = new ButtonBuilder()
             .setCustomId("ConfigSemiReturnButton")
             .setLabel("Return")
@@ -410,11 +410,11 @@ module.exports = {
         await interaction.update({
             embeds: [Embed.embeds[0]],
             components: [ButtonActionRow],
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     },
 
-    async createLoggingMessage(interaction, botClient) {
+    async createLoggingMessage(interaction, BotClient) {
         const ReturnButton = new ButtonBuilder()
             .setCustomId("ConfigSemiReturnButton")
             .setLabel("Return")
@@ -432,11 +432,11 @@ module.exports = {
         await interaction.update({
             embeds: [Embed.embeds[0]],
             components: [ButtonActionRow],
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     },
 
-    async createMiscMessage(interaction, botClient) {
+    async createMiscMessage(interaction, BotClient) {
         const ReturnButton = new ButtonBuilder()
             .setCustomId("ConfigSemiReturnButton")
             .setLabel("Return")
@@ -498,7 +498,7 @@ module.exports = {
         await interaction.update({
             embeds: [Embed.embeds[0]],
             components: [PrefixActionRow, EditAccessActionRow, DMChannelActionRow, CommandDeniedActionRow],
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     },
 }

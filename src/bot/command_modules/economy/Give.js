@@ -12,7 +12,7 @@ module.exports = {
     RequiredPermissions: [],
     SlashCommandOptions: [],
 
-    async execute(message, arguements, botClient) {
-        const userId = message.author?.id || message.user?.id
+    async execute(Interaction, PassedArguments, BotClient) {
+        const userId = Interaction.author?.id || Interaction.user?.id
     }
 }

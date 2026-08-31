@@ -16,29 +16,29 @@ module.exports = {
         {"Name": "Reason", "Description": "The reason for the damage", "Required": false, "Type": "String", "Choices": []}
     ],
 
-    async execute(message, arguements, botClient) {
-        const DamagedUser = message.options?.getUser('user') || message.mentions?.users?.first() || arguements[0]
-        const Damage = parseInt(arguements[1])
-        const Reason = arguements.slice(2).join(" ") || "No Reason Provided"
+    async execute(Interaction, PassedArguments, BotClient) {
+        const DamagedUser = Interaction.options?.getUser('user') || Interaction.mentions?.users?.first() || PassedArguments[0]
+        const Damage = parseInt(PassedArguments[1])
+        const Reason = PassedArguments.slice(2).join(" ") || "No Reason Provided"
 
-        const OldData = JSON.parse(DataHandler.getUser(message.guild.id, DamagedUser.id).damage)
-        OldData.push({"damage": Damage, "reason": Reason, "admin": message.author?.id || message.user?.id, "time": Date.now()})
+        const OldData = JSON.parse(DataHandler.getUser(Interaction.guild.id, DamagedUser.id).damage)
+        OldData.push({"damage": Damage, "reason": Reason, "admin": Interaction.author?.id || Interaction.user?.id, "time": Date.now()})
 
         const NewJson = JSON.stringify(OldData)
-        const UserDamageJsonReturned = JSON.parse(DataHandler.addDamage(message.guild.id, DamagedUser.id, NewJson).damage)
+        const UserDamageJsonReturned = JSON.parse(DataHandler.addDamage(Interaction.guild.id, DamagedUser.id, NewJson).damage)
 
         const TotalDamageCalculated = UserDamageJsonReturned.reduce((totalDamage, currentDamageDictionary) => {
             return totalDamage + (currentDamageDictionary.damage || 0);
         }, 0);
 
         if (TotalDamageCalculated >= 25) {
-            const KickedMember = message.guild.members.cache.get(DamagedUser.id)   
+            const KickedMember = Interaction.guild.members.cache.get(DamagedUser.id)   
 
-            await message.channel.send(`User <@${DamagedUser.id}> has been banned for reaching taking more than 25 damage, total: ${TotalDamageCalculated}`)
+            await Interaction.channel.send(`User <@${DamagedUser.id}> has been banned for reaching taking more than 25 damage, total: ${TotalDamageCalculated}`)
             await KickedMember.kick(Reason)
             await KickedMember.send(`<@${DamagedUser.id}>, You have been banned for reaching taking more than 25 damage, total: ${TotalDamageCalculated}`)
         } else {
-            await message.channel.send(`User <@${DamagedUser.id}> has taken ${Damage} damage for ${Reason} and now has a total of ${TotalDamageCalculated}`)
+            await Interaction.channel.send(`User <@${DamagedUser.id}> has taken ${Damage} damage for ${Reason} and now has a total of ${TotalDamageCalculated}`)
         }
     }
 }

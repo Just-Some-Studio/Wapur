@@ -14,26 +14,26 @@ module.exports = {
         {"Name": "amount", "Description": "The amount of credits to gamble", "Required": true, "Type": "Integer", "Choices": []},
     ],
 
-    async execute(message, arguements, botClient) {
-        const userId = message.author?.id || message.user?.id
-        const Amount = Math.floor(parseInt(arguements[0]))
+    async execute(Interaction, PassedArguments, BotClient) {
+        const userId = Interaction.author?.id || Interaction.user?.id
+        const Amount = Math.floor(parseInt(PassedArguments[0]))
 
         if (!Amount || isNaN(Amount)) {
-            return message.reply("Invalid amount provided")
+            return Interaction.reply("Invalid amount provided")
         }
 
         if (Amount > 5000 || Amount < 5) {
-            return message.reply("You can only gamble up to 5000 credits and a minimum of 5")
+            return Interaction.reply("You can only gamble up to 5000 credits and a minimum of 5")
         }
         
         const CurrentTime = Date.now()
         const CooldownTime = 5 * 60 * 1000
 
-        const UserData = DataHandler.getUser(message.guild.id, userId)
+        const UserData = DataHandler.getUser(Interaction.guild.id, userId)
 
 
         if (Amount > UserData.credits) {
-            return message.reply("You cannot gamble more credits than you have")
+            return Interaction.reply("You cannot gamble more credits than you have")
         }
 
         if (CurrentTime - UserData.lastGamble < CooldownTime) {
@@ -42,9 +42,9 @@ module.exports = {
 
             if (CooldownTimeLeft / (1000) <= 60) {
                 MinutesLeft = Math.ceil(CooldownTimeLeft / (1000))
-                return message.reply(BotModules.embedMessage(`You cannot gamble again for another **${MinutesLeft}** more seconds.`, 'c9c175'))
+                return Interaction.reply(BotModules.embedMessage(`You cannot gamble again for another **${MinutesLeft}** more seconds.`, 'c9c175'))
             } else {
-                return message.reply(BotModules.embedMessage(`You cannot gamble again for another **${MinutesLeft}** more minutes.`, 'c9c175'))
+                return Interaction.reply(BotModules.embedMessage(`You cannot gamble again for another **${MinutesLeft}** more minutes.`, 'c9c175'))
             }
         }
 
@@ -82,7 +82,7 @@ module.exports = {
             `Your current balance is ${UserData.credits}`
         )
 
-        message.reply({
+        Interaction.reply({
             content: "", 
             embeds: [MessageEmbed.embeds[0]],
             components: [GameActionRow],
@@ -90,7 +90,7 @@ module.exports = {
     },
 
 
-    async endGame(interaction, botClient) {
+    async endGame(interaction, BotClient) {
         const BotChoice = `${Math.floor(Math.random() * 3)}`
         
         var PlayerChoice = ""
