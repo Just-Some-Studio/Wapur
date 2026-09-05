@@ -12,6 +12,7 @@ module.exports = {
 
     RequiredPermissions: [PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const AllSavedTicketData = JSON.parse(DataHandler.getServer(Interaction.guild.id).ticketData)

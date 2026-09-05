@@ -26,6 +26,7 @@ module.exports = {
         {"Name": "RewardAmount", "Description": "The amount of the reward for the code you are adding or changing", "Type": "Integer", "Required": false, "Choices": []},
         {"Name": "RewardRole", "Description": "The role to give for the code you are adding or changing", "Type": "Role", "Required": false, "Choices": []}
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguements, BotClient) {
     }

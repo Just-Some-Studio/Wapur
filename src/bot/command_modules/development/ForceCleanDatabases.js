@@ -9,8 +9,9 @@ module.exports = {
 
     DevOnly: true,
     
-    RequiredPermissions: [PermissionsBitField.Flags.ViewAuditLog],
+    RequiredPermissions: [PermissionsBitField.Flags.Administrator],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         console.log("[CRON] Running forced cleanup task...")

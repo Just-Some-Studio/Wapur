@@ -10,6 +10,7 @@ module.exports = {
 
     RequiredPermissions: [PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ModerateMembers],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
     }

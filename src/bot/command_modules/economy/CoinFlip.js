@@ -13,6 +13,7 @@ module.exports = {
     SlashCommandOptions: [
         {"Name": "amount", "Description": "The amount of credits to gamble", "Required": true, "Type": "Integer", "Choices": []},
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const userId = Interaction.author?.id || Interaction.user?.id

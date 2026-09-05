@@ -18,6 +18,7 @@ module.exports = {
 
     RequiredPermissions: [],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguements, BotClient) {
         const JokeIndex = Math.floor(Math.random() * Jokes.length)

@@ -14,6 +14,7 @@ module.exports = {
         {"Name": "User", "Description": "The user to warn", "Required": true, "Type": "User", "Choices": []},
         {"Name": "Reason", "Description": "The reason for the warning", "Required": false, "Type": "String", "Choices": []}
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const SelectedUser = Interaction.mentions.members?.first() || await BotClient.users?.fetch(PassedArguments[0])

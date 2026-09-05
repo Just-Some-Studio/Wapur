@@ -11,6 +11,7 @@ module.exports = {
 
     RequiredPermissions: [PermissionsBitField.Flags.ManageGuild],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
 

@@ -26,6 +26,7 @@ module.exports = {
 
     RequiredPermissions: [],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const UserId = Interaction.author?.id || Interaction.user?.id

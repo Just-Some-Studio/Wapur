@@ -14,6 +14,7 @@ module.exports = {
         {"Name": "User", "Description": "The user to ban", "Required": true, "Type": "User", "Choices": []},
         {"Name": "Reason", "Description": "The reason for the ban", "Required": false, "Type": "String", "Choices": []}
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
     }

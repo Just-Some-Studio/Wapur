@@ -13,6 +13,7 @@ module.exports = {
     SlashCommandOptions: [
         {"Name": "User", "Description": "The user to blacklist", "Required": true, "Type": "User", "Choices": []},
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
     }

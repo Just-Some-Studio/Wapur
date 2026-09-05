@@ -14,6 +14,7 @@ module.exports = {
 
     RequiredPermissions: [PermissionsBitField.Flags.ManageGuild],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguements, BotClient) {
         let ReplyContent = ""

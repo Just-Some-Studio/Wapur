@@ -11,6 +11,7 @@ module.exports = {
 
     RequiredPermissions: [],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguements, BotClient) {
         const GithubButton = new ButtonBuilder()

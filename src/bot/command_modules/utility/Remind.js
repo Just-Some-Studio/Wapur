@@ -7,13 +7,14 @@ module.exports = {
     Description: "Sets a reminder to ping you with a Interaction",
     Subset: "Utility",
 
-    DevOnly: true,
+    DevOnly: false,
 
     RequiredPermissions: [],
     SlashCommandOptions: [
         {"Name": "Reminder", "Description": "Message to remind you with", "Required": true, "Type": "String", "Choices": []},
         {"Name": "Time", "Description": "eg. 3h 2s or 5h 24m 4s", "Required": true, "Type": "String", "Choices": []}
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguements, BotClient) {
         let Arguments = PassedArguements
@@ -36,10 +37,12 @@ module.exports = {
         await Interaction.reply({
             content: `You will be reminded in ${Hours} hours, ${Minutes} minutes, ${Seconds} seconds`
         })
-
+        
+        const User = Interaction.user?.id || Interaction.author?.id
+        const Channel = BotClient.channels.cache.get(Interaction.channel.id)
         setTimeout(() => {
-            Interaction.reply({
-                content: `<@>: ${Reason}`
+            Channel.send({
+                content: `<@${User}>: ${Reason}`
             })
         }, TotalTime)
     }

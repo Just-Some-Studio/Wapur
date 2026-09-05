@@ -9,7 +9,7 @@ module.exports = {
 
     DevOnly: true,
     
-    RequiredPermissions: [],
+    RequiredPermissions: [PermissionsBitField.Flags.Administrator],
     SlashCommandOptions: [
         {"Name": "Query_Type", "Description": "The type of query to run", "Required": true, "Type": "String", "Choices": [
             {"Name": "RUN", "Value": "run"},
@@ -18,6 +18,7 @@ module.exports = {
         ]},
         {"Name": "Query_Data", "Description": "The data to use in the query", "Required": true, "Type": "String", "Choices": []}
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const QueryType = PassedArguments[0].toLowerCase()

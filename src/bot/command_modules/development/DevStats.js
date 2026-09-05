@@ -9,8 +9,9 @@ module.exports = {
    
     DevOnly: true,
 
-    RequiredPermissions: [PermissionsBitField.Flags.ManageGuild],
+    RequiredPermissions: [PermissionsBitField.Flags.Administrator],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
 

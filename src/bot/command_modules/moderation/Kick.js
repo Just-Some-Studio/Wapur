@@ -14,6 +14,7 @@ module.exports = {
         {"Name": "User", "Description": "The user to kick", "Required": true, "Type": "User", "Choices": []},
         {"Name": "Reason", "Description": "The reason for the kick", "Required": false, "Type": "String", "Choices": []}
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const KickedMember = Interaction.mentions.members?.first() || Interaction.guild.members.cache.get(PassedArguments[0])        

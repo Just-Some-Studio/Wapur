@@ -5,8 +5,9 @@ const BotModules = require("../../modules.js")
 module.exports = {
     Name: "example", // The name of the command and what is input when typeing
     Description: "This is an example command", // The description provided to slash commands
+    Subset: "Development", // The subset of commands this command belongs to, used for organization in the help command
 
-    // Makes a command only viewable/usable for bot owner.
+    // Makes a command only viewable/usable for bot owner, for works in progress or development commands.
     DevOnly: true,
 
     // Permissions required to view and use a command.

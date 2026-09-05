@@ -100,24 +100,43 @@ module.exports = {
                 if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
                     const Permissions = PermissionsBitField.resolve(Command.RequiredPermissions)
                     SlashCommand.setDefaultMemberPermissions(Permissions)
-                } else if (Command.DevOnly) {
+                } 
+                
+                if (Command.DevOnly) {
                     SlashCommand.setDefaultMemberPermissions(0n)
                 }
 
-            for (let Iteration = 0; Iteration < Command.SlashCommandOptions.length; Iteration++) {
-                const Option = Command.SlashCommandOptions[Iteration]
-                
+                if (Command.Subcommands && Command.Subcommands.length > 0) {
+                    Command.Subcommands.forEach((subcommandData) => {
+                        SlashCommand.addSubcommand((subcommand) => {
+                            const subcommandBuilder = subcommand
+
+                            subcommandBuilder
+                                .setName(subcommandData.Name.toLowerCase())
+                                .setDescription(subcommandData.Description.toLowerCase())
+
+                            if (subcommandData.RequiredPermissions && subcommandData.RequiredPermissions.length > 0) {
+                                const Permissions = PermissionsBitField.resolve(subcommandData.RequiredPermissions)
+                                subcommand.setDefaultMemberPermissions(Permissions)
+                            }
+
+                            return subcommandBuilder
+                        })
+                    })
+                }
+
+            Command.SlashCommandOptions.forEach((Option, index) => {            
                 if (Option.Type === "String") {
                     SlashCommand.addStringOption(option => 
                         option.setName(Option.Name.toLowerCase())
-                            .setDescription(Option.Description)
+                            .setDescription(Option.Description.toLowerCase())
                             .setRequired(Option.Required)
                             .addChoices(...Option.Choices.map(choice => ({ name: choice.Name, value: choice.Value })))
                     )
                 } else if (Option.Type === "Integer") {
                     SlashCommand.addIntegerOption(option => 
                         option.setName(Option.Name.toLowerCase())
-                            .setDescription(Option.Description)
+                            .setDescription(Option.Description.toLowerCase())
                             .setRequired(Option.Required)
                             .addChoices(...Option.Choices.map(choice => ({ name: choice.Name, value: choice.Value })))
                     )
@@ -146,7 +165,7 @@ module.exports = {
                             .setRequired(Option.Required)
                     )
                 }
-            }
+            })
 
             CommandList.push(SlashCommand)
         }

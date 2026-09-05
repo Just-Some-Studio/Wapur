@@ -35,6 +35,11 @@ class DataHandler {
             )
         `).run()
 
+        this.BotDataBase.prepare(`CREATE TABLE IF NOT EXISTS botAnalytics (
+            botUptime TEXT
+            )
+        `).run()
+
         this.Connections = new Map()
     }
 
@@ -139,6 +144,9 @@ class DataHandler {
         }
     }
 
+    logBotUptime(BotUptime) {
+        this.BotDataBase.prepare(`UPDATE botAnalytics SET botUptime = ?`).run(BotUptime)
+    }
 
 
 

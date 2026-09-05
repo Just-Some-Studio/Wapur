@@ -13,6 +13,7 @@ module.exports = {
     SlashCommandOptions: [
         {"Name": "Amount", "Description": "The amount of messages to delete", "Required": true, "Type": "Integer", "Choices": []}
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const AmountToDelete = parseInt(PassedArguments[0])

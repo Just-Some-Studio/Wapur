@@ -13,6 +13,7 @@ module.exports = {
 
     RequiredPermissions: [],
     SlashCommandOptions: [],
+    Subcommands: [],
     
 
     async execute(Interaction, PassedArguments, BotClient) {

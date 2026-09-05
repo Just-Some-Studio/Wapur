@@ -13,6 +13,7 @@ module.exports = {
     SlashCommandOptions: [
         {"Name": "Code", "Description": "Input a code to redeem", "Required": true, "Type": "String", "Choices": []},
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const userId = Interaction.author?.id || Interaction.user?.id

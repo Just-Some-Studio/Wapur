@@ -15,6 +15,7 @@ module.exports = {
         {"Name": "Damage", "Description": "The amount of damage to give", "Required": true, "Type": "Integer", "Choices": []},
         {"Name": "Reason", "Description": "The reason for the damage", "Required": false, "Type": "String", "Choices": []}
     ],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const DamagedUser = Interaction.options?.getUser('user') || Interaction.mentions?.users?.first() || PassedArguments[0]

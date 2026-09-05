@@ -11,6 +11,7 @@ module.exports = {
 
     RequiredPermissions: [],
     SlashCommandOptions: [],
+    Subcommands: [],
 
     async execute(Interaction, PassedArguments, BotClient) {
         const UserData = DataHandler.getUser(Interaction.guild.id, Interaction.author?.id || Interaction.user?.id)
