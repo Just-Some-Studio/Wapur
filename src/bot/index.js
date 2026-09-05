@@ -52,14 +52,19 @@ CommandList.map(command => command.toJSON())
 const Rest = new REST({ version: '10' }).setToken(BotToken)
 
 try {
-    console.log(`Started refreshing ${CommandList.length} application (/) commands.`)
+    console.log(chalk.green(`Started refreshing ${CommandList.length} application (/) commands.`))
     
     Rest.put(Routes.applicationCommands(ClientID), {body: CommandList})
 } catch (ThrownError) {
     console.error(ThrownError)
 }
 
+BotClient.on(Events.ClientReady, async (Bit) => {
+    console.log(chalk.green(`Logged in as ${Bit.user.tag} at ${Date.now()}`))
 
+    const BotUptime = Date.now()
+    DataHandler.logBotUptime(BotUptime)
+})
 
 
 // Event Action
