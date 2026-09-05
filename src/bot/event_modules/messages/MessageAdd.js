@@ -10,9 +10,9 @@ async function RunEvent(PassedArguements) {
 
     if (Message.author.bot) return
 
-    if (Message.content.toLowerCase().includes(";configure")) {
-        return Message.reply("Please use configure as a slash command.")
-    }
+    // if (Message.content.toLowerCase().includes(";configure")) {
+    //     return Message.reply("Please use configure as a slash command.")
+    // }
 
     const miscBotData = JSON.parse(DataHandler.getServer(Message.guild?.id).miscBotData)
     const levelSettings = JSON.parse(DataHandler.getServer(Message.guild?.id).levelSettings)
@@ -58,11 +58,11 @@ async function RunEvent(PassedArguements) {
 
 
     // DM Handler
-    if (!Message.guild) {
-        Message.reply({
-            content: "You cannot speak directly to the bot, use the respond button to send a message back. \n\nIf you are trying to use commands in DMs, please move to a server.",
-        })
-    }
+    // if (!Message.guild) {
+    //     Message.reply({
+    //         content: "You cannot speak directly to the bot, use the respond button to send a message back. \n\nIf you are trying to use commands in DMs, please move to a server.",
+    //     })
+    // }
 
 
     //     const Channel = BotClient.channels.cache.get(DMMessageChannel)
@@ -101,46 +101,46 @@ async function RunEvent(PassedArguements) {
 
 
     // Handling commands
-    if (Message.content.startsWith(Prefix)) {
-        const PassedArguements = Message.content.slice(Prefix.length).trim().split(/ +/)
-        const CommandName = PassedArguements.shift().toLowerCase()
-        const Command = BotClient.commands.get(CommandName)
+    // if (Message.content.startsWith(Prefix)) {
+    //     const PassedArguements = Message.content.slice(Prefix.length).trim().split(/ +/)
+    //     const CommandName = PassedArguements.shift().toLowerCase()
+    //     const Command = BotClient.commands.get(CommandName)
 
-        if (!Command) return
+    //     if (!Command) return
 
-        if (Command.Subset === "Economy" && EconomyEnabled === false) {
-            return Message.reply("Sorry, Economy is disabled in this server.")
-        }
+    //     if (Command.Subset === "Economy" && EconomyEnabled === false) {
+    //         return Message.reply("Sorry, Economy is disabled in this server.")
+    //     }
 
-        if (Command.Subset === "Leveling" && LevelingEnabled === false) {
-            return Message.reply("Sorry, Leveling is disabled in this server.")
-        }
+    //     if (Command.Subset === "Leveling" && LevelingEnabled === false) {
+    //         return Message.reply("Sorry, Leveling is disabled in this server.")
+    //     }
 
-        // Prevents people who don't have permissions from using commands        
-        if (CommandDeniedChannels.includes(Message.channel.id)) {
-            return
-        }
+    //     // Prevents people who don't have permissions from using commands        
+    //     if (CommandDeniedChannels.includes(Message.channel.id)) {
+    //         return
+    //     }
 
-        if (!Message.member) {return Message.reply("Commands cannot be run in DMs, go to a server to run commands.")}
+    //     if (!Message.member) {return Message.reply("Commands cannot be run in DMs, go to a server to run commands.")}
         
-        if (Command.DevOnly && Message.author.id !== BotOwner) {
-            return
-        }
+    //     if (Command.DevOnly && Message.author.id !== BotOwner) {
+    //         return
+    //     }
 
-        if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
-            if (!Message.member.permissions.has(Command.RequiredPermissions)) {
-                return
-            }
-        }
+    //     if (Command.RequiredPermissions && Command.RequiredPermissions.length > 0) {
+    //         if (!Message.member.permissions.has(Command.RequiredPermissions)) {
+    //             return
+    //         }
+    //     }
 
-        // Attempts to run a command
-        try {
-            await Command.execute(Message, PassedArguements, BotClient);
-        } catch (ThrownError) {
-            console.error(ThrownError)
-            await Message.reply(`An error occured during runtime: ${ThrownError}`)
-        }
-    }
+    //     // Attempts to run a command
+    //     try {
+    //         await Command.execute(Message, PassedArguements, BotClient);
+    //     } catch (ThrownError) {
+    //         console.error(ThrownError)
+    //         await Message.reply(`An error occured during runtime: ${ThrownError}`)
+    //     }
+    // }
 }
 
 module.exports = {RunEvent}
