@@ -46,11 +46,11 @@ async function RunEvent(PassedArguements) {
     if (!Command) return
 
     if (Command.Subset === "Economy" && EconomyEnabled === false) {
-        return Message.reply("Sorry, Economy is disabled in this server.")
+        return Interaction.reply("Sorry, Economy is disabled in this server.")
     }
 
     if (Command.Subset === "Leveling" && LevelingEnabled === false) {
-        return Message.reply("Sorry, Leveling is disabled in this server.")
+        return Interaction.reply("Sorry, Leveling is disabled in this server.")
     }
 
 
@@ -80,7 +80,7 @@ async function RunEvent(PassedArguements) {
 
 
     // Prevents people who don't have permissions from using commands        
-    if (CommandDeniedChannels.includes(Interaction.channel.id)) {
+    if (CommandDeniedChannels.includes(Interaction.channel.id) && Command.Subset !== "Setup" && Command.Subset !== "Moderation" && Command.Subset !== "Ticket") {
         return
     }
 
@@ -101,7 +101,6 @@ async function RunEvent(PassedArguements) {
         await Command.execute(Interaction, ArguementsToPass, BotClient)
     } catch (ThrownError) {
         console.error(ThrownError)
-        await Interaction.reply(`An error occured during runtime: ${ThrownError}`)
     }
 }
 

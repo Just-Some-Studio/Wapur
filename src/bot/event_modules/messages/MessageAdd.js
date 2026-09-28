@@ -3,16 +3,15 @@ const DataHandler = require("../../dataHandler.js")
 const BotModules = require("../../modules.js")
 const {PermissionsBitField} = require("discord.js")
 
+// Caches user IDs for 3 seconds and deletes messages if sent too fast, to prevent spam and flooding.
+var FloodFilterCache = {}
+
 async function RunEvent(PassedArguements) {
     const BotClient = PassedArguements.BotClient
     const Message = PassedArguements.Message
     const BotOwner = PassedArguements.BotOwner
 
     if (Message.author.bot) return
-
-    // if (Message.content.toLowerCase().includes(";configure")) {
-    //     return Message.reply("Please use configure as a slash command.")
-    // }
 
     const miscBotData = JSON.parse(DataHandler.getServer(Message.guild?.id).miscBotData)
     const levelSettings = JSON.parse(DataHandler.getServer(Message.guild?.id).levelSettings)
@@ -35,6 +34,21 @@ async function RunEvent(PassedArguements) {
     const EconomyEnabled = economySettings[0] || false
 
     const loggingChannels = loggingSettings[0] || []
+
+
+    if (!FloodFilterCache[Message.author.id]) {
+        FloodFilterCache[Message.author.id] = [Date.now(), 0]
+
+        setTimeout(() => {
+           delete FloodFilterCache[Message.author.id]
+        }, 3000)
+    } else {
+        if (Date.now() - FloodFilterCache[Message.author.id][0] < 3000 && FloodFilterCache[Message.author.id][1] > 3) {
+            return Message.delete()
+        } else {
+            FloodFilterCache[Message.author.id] = [Date.now(), FloodFilterCache[Message.author.id][1] + 1]
+        }
+    }
 
     if (!EXPDeniedChannels.includes(Message.channel.id) && LevelingEnabled === true) {
         let GivenEXP = Math.min(Math.max(Math.floor(Math.random() * MaxEXPGain), MinEXPGain), MaxEXPGain)
